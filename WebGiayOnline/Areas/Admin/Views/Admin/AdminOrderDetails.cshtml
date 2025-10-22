@@ -1,0 +1,105 @@
+﻿@model WebGiayOnline.Models.Order
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout1.cshtml"; // hoặc _Layout2.cshtml tùy layout bạn dùng
+}
+
+<div class="container mt-4" style="font-size: 1.1rem;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">
+            <i class="fas fa-file-invoice me-2"></i> Chi tiết đơn hàng #@Model.OrderId
+        </h2>
+        <a asp-area="Admin" asp-controller="Admin" asp-action="OrderList" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <p><strong><i class="fas fa-user me-2"></i>Khách hàng:</strong> @Model.User?.FullName</p>
+            <p><strong><i class="fas fa-calendar-alt me-2"></i>Ngày đặt:</strong> @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+            <p>
+                <strong><i class="fas fa-info-circle me-2"></i>Trạng thái:</strong>
+                @if (Model.Status == "Chờ xác nhận")
+                {
+                    <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                }
+                else if (Model.Status == "Đã xác nhận")
+                {
+                    <span class="badge bg-info text-dark">Đã xác nhận</span>
+                }
+                else if (Model.Status == "Hoàn thành")
+                {
+                    <span class="badge bg-success">Hoàn thành</span>
+                }
+               @*  else if (Model.Status == "Đã Hủy")
+                {
+                    <span class="badge bg-danger">Đã hủy</span>
+                } *@
+                else
+                {
+                    <span class="badge bg-secondary">@Model.Status</span>
+                }
+            </p>
+            <p><strong><i class="fas fa-money-bill-wave me-2"></i>Tổng tiền:</strong> @Model.Total.ToString("N0") đ</p>
+        </div>
+    </div>
+
+    <h4 class="mb-3"><i class="fas fa-box-open me-2"></i>Sản phẩm</h4>
+    <div class="table-responsive mb-4">
+        <table class="table table-bordered align-middle">
+            <thead class="table-light text-center">
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên giày</th>
+                    <th>Size</th>
+                    <th>Màu</th>
+                    <th>Số lượng</th>
+                    <th>Đơn giá</th>
+                    <th>Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderDetails)
+                {
+                    var thanhTien = item.Quantity * item.Price;
+                    <tr class="text-center">
+                        <td>
+                            <img src="@item.Giay.ImageUrl" alt="@item.Giay.Name"
+                                 style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px;" />
+                        </td>
+                        <td class="text-start">@item.Giay.Name</td>
+                        <td>@item.SizeId</td>
+                        <td>@item.Giay.Color</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Price.ToString("N0") đ</td>
+                        <td>@thanhTien.ToString("N0") đ</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <h4 class="mb-3"><i class="fas fa-history me-2"></i>Lịch sử trạng thái</h4>
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Thời gian</th>
+                <th>Trạng thái cũ</th>
+                <th>Trạng thái mới</th>
+                <th>Người thay đổi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var h in Model.StatusHistories.OrderByDescending(s => s.ChangedAt))
+            {
+                <tr>
+                    <td>@h.ChangedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@h.OldStatus</td>
+                    <td>@h.NewStatus</td>
+                    <td>@h.ChangedBy</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

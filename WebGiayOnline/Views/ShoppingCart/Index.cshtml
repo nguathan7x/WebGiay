@@ -1,0 +1,166 @@
+﻿@model List<WebGiayOnline.Models.ShoppingCartItem>
+@using System.Globalization
+@{
+    var total = Model.Sum(x => x.Price * x.Quantity);
+}
+
+<div class="container py-4">
+    <h2 class="mb-4 text-center fw-bold">Your Shopping Cart</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            Your cart is empty. Browse our collection to find the perfect pair!
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive shadow rounded bg-white cart-table">
+            <table class="table align-middle mb-0 text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Product</th>
+                        <th>Image</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="text-start fw-medium">@item.Giay.Name</td>
+                            <td>
+                                <img src="@item.Giay.ImageUrl" class="product-img" alt="@item.Giay.Name" />
+                            </td>
+                            <td>@item.Price.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</td>
+                            <td>
+                                <form asp-action="UpdateQuantity" method="post" class="d-flex justify-content-center align-items-center gap-2">
+                                    <input type="hidden" name="cartItemId" value="@item.ShoppingCartItemId" />
+                                    <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control form-control-sm text-center quantity-input" />
+                                    <button type="submit" class="btn btn-sm btn-outline-primary btn-update rounded-pill">Update</button>
+                                </form>
+                            </td>
+                            <td>@((item.Price * item.Quantity).ToString("C0", CultureInfo.GetCultureInfo("vi-VN")))</td>
+                            <td>
+                                <form asp-action="RemoveFromCart" method="post">
+                                    <input type="hidden" name="cartItemId" value="@item.ShoppingCartItemId" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger btn-remove rounded-pill">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+
+                    <tr class="table-light fw-bold cart-summary">
+                        <td colspan="4" class="text-end">Subtotal:</td>
+                        <td colspan="2">@total.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
+            <form asp-action="ClearCart" method="post">
+                <button type="submit" class="btn btn-warning btn-clear rounded-pill shadow-sm">
+                    Clear Cart
+                </button>
+            </form>
+
+            <div class="d-flex gap-2">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary rounded-pill shadow-sm">Continue Shopping</a>
+                <form asp-controller="ShoppingCart" asp-action="Checkout" method="get">
+                    <button type="submit" class="btn btn-success btn-checkout rounded-pill shadow-sm">Proceed to Checkout</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .product-img {
+        height: 60px;
+        width: 60px;
+        object-fit: cover;
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+    }
+
+        .product-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+        }
+
+    .quantity-input {
+        width: 60px;
+        border-radius: 8px;
+    }
+
+    .btn {
+        transition: all 0.2s ease-in-out;
+    }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+    /* ===========================
+               Dark Mode Cart Styling
+               =========================== */
+    .dark-mode .cart-table,
+    .dark-mode .cart-table th,
+    .dark-mode .cart-table td {
+        background-color: #1e1e1e !important;
+        color: #e0e0e0 !important;
+        border-color: #333 !important;
+    }
+
+    .dark-mode .table-dark {
+        background-color: #2a2a2a !important;
+    }
+
+    .dark-mode .product-img {
+        border: 1px solid #444;
+        background-color: #121212;
+    }
+
+    .dark-mode .quantity-input {
+        background-color: #2a2a2a;
+        color: #fff;
+        border: 1px solid #555;
+    }
+
+    .dark-mode .form-control:focus {
+        background-color: #2a2a2a;
+        color: #fff;
+        border-color: #64b5f6;
+    }
+
+    .dark-mode .btn-update,
+    .dark-mode .btn-remove,
+    .dark-mode .btn-clear,
+    .dark-mode .btn-checkout {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: 1px solid #555 !important;
+    }
+
+    .dark-mode .btn-checkout {
+        background-color: #2e7d32 !important;
+    }
+
+        .dark-mode .btn-checkout:hover {
+            background-color: #388e3c !important;
+        }
+
+    .dark-mode .btn-update:hover,
+    .dark-mode .btn-remove:hover,
+    .dark-mode .btn-clear:hover {
+        background-color: #444 !important;
+    }
+
+    .dark-mode .cart-summary {
+        color: #ccc !important;
+    }
+</style>

@@ -1,0 +1,33 @@
+﻿@model IEnumerable<WebGiayOnline.Models.Brand>
+@{
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Brand List</h2>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Create New Brand</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var brand in Model)
+        {
+            <tr>
+                <td>@brand.Name</td>
+                <td>@brand.Description</td>
+                <td>
+                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@brand.BrandId">Edit</a>
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@brand.BrandId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

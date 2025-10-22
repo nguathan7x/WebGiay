@@ -1,0 +1,126 @@
+﻿@using WebGiayOnline.Models
+@model List<Order>
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = Localizer["Order History"];
+    var statusList = ViewBag.AvailableStatuses as List<string>;
+    string? currentStatus = ViewBag.CurrentStatus as string;
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+
+    string GetStatusBadgeClass(string status) => status switch
+    {
+        "Chờ xác nhận" => "bg-warning text-dark",
+        "Đã xác nhận" => "bg-info text-dark",
+        "Hoàn thành" => "bg-success",
+        "Đã hủy" => "bg-danger",
+        _ => "bg-secondary text-light"
+    };
+
+    string GetStatusBadgeIcon(string status) => status switch
+    {
+        "Chờ xác nhận" => "bi-hourglass-split",
+        "Đã xác nhận" => "bi-patch-check-fill",
+        "Hoàn thành" => "bi-check-circle-fill",
+        "Đã hủy" => "bi-x-octagon-fill",
+        _ => "bi-question-circle"
+    };
+}
+
+<div class="container px-3 px-md-5 mt-4" style="max-width: 960px;">
+    <h2 class="mb-4">
+        <i class="bi bi-card-checklist me-2"></i> @Localizer["Order History"]
+    </h2>
+
+    <form method="get" asp-action="MyOrders" class="d-flex flex-wrap gap-2 mb-4 ">
+        <div class="input-group" style="max-width: 280px;">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" name="searchQuery" value="@ViewBag.SearchQuery" class="form-control" placeholder="@Localizer["Search by order ID..."]">
+        </div>
+
+        <select name="status" class="form-select w-auto">
+            @foreach (var s in statusList!)
+            {
+                <option value="@s" selected="@(s == currentStatus ? "selected" : null)">@Localizer[s]</option>
+            }
+        </select>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-filter-circle me-1"></i>@Localizer["Search"]
+        </button>
+    </form>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            @Localizer["You have no orders yet"].</div>
+    }
+    else
+    {
+        foreach (var order in Model)
+        {
+            var statusClass = GetStatusBadgeClass(order.Status);
+            var statusIcon = GetStatusBadgeIcon(order.Status);
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <h5 class="mb-0">
+                                <i class="bi bi-receipt"></i> @Localizer["Order"] #@order.OrderId
+                            </h5>
+                            <small class="text-muted">
+                                <i class="bi bi-calendar-event me-1"></i>
+                                @order.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                            </small>
+                        </div>
+                        <div>
+                            <span class="badge @statusClass">
+                                <i class="bi @statusIcon me-1"></i>@Localizer[order.Status]
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-success fw-bold">
+                            <i class="bi bi-currency-dollar me-1"></i>@order.Total.ToString("N0") đ
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#details_@order.OrderId">
+                            <i class="bi bi-eye"></i> @Localizer["View details"]
+                        </button>
+                    </div>
+
+                    <div class="collapse mt-3" id="details_@order.OrderId">
+                        <ul class="list-group list-group-flush">
+                            @foreach (var item in order.OrderDetails!)
+                            {
+                                <li class="list-group-item d-flex align-items-start gap-3">
+                                    <img src="@item.Giay.ImageUrl"
+                                         alt="@item.Giay.Name"
+                                         class="rounded"
+                                         style="width: 60px; height: 60px; object-fit: cover;" />
+                                    <div>
+                                        <div class="fw-bold">@item.Giay.Name</div>
+                                        <div class="small text-muted">
+                                            <i class="bi bi-aspect-ratio me-1"></i> Size: @item.Size.Label –
+                                            <i class="bi bi-stack"></i> SL: @item.Quantity –
+                                            <i class="bi bi-currency-dollar"></i> Giá: @item.Price.ToString("N0") đ –
+                                            <i class="bi bi-palette2"></i> @Localizer["Color"]: @item.Giay.Color
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

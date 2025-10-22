@@ -1,0 +1,41 @@
+﻿@model WebGiayOnline.Models.Giay
+@{
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Update Stock Quantity for @Model.Name</h2>
+
+<form method="post" asp-action="EditBulk" asp-controller="Stock">
+    <input type="hidden" name="GiayId" value="@Model.GiayId" />
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Size</th>
+                <th>Current Quantity</th>
+                <th>New Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var size in ViewBag.AllSizes as List<WebGiayOnline.Models.Size>)
+            {
+                var giaySize = ViewBag.CurrentStocks as Dictionary<int, int>;
+                int currentQty = 0;
+                if (giaySize != null && giaySize.ContainsKey(size.SizeId))
+                {
+                    currentQty = giaySize[size.SizeId];
+                }
+                <tr>
+                    <td>@size.Label</td>
+                    <td>@currentQty</td>
+                    <td>
+                        <input type="number" name="Quantities[@size.SizeId]" min="0" class="form-control" value="@currentQty" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Update Stock</button>
+    <a asp-action="ChooseProduct" asp-controller="Stock" class="btn btn-secondary">Back to List</a>
+</form>

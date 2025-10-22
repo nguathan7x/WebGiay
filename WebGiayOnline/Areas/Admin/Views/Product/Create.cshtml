@@ -1,0 +1,122 @@
+﻿@model WebGiayOnline.Models.Giay
+@{
+    ViewData["Title"] = "Tạo sản phẩm mới";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout1.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h3 class="text-primary fw-bold mb-4">
+                <i class="fas fa-plus-circle me-2"></i> Tạo sản phẩm mới
+            </h3>
+
+            <form asp-action="Create" enctype="multipart/form-data">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Tên sản phẩm</label>
+                        <input asp-for="Name" class="form-control" placeholder="Nhập tên sản phẩm" required />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Gender" class="form-label">Giới tính</label>
+                        <select asp-for="Gender" class="form-select" required>
+                            <option value="">-- Chọn --</option>
+                            <option>Men</option>
+                            <option>Women</option>
+                            <option>Unisex</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Price" class="form-label">Giá</label>
+                        <input asp-for="Price" type="number" class="form-control" min="0" required />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Color" class="form-label">Màu sắc</label>
+                        <input asp-for="Color" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Hình ảnh sản phẩm</label>
+                        <input type="file" name="ImageFiles" class="form-control" multiple />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Mô tả ngắn</label>
+                    <textarea asp-for="Description" class="form-control" rows="2"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Content" class="form-label">Chi tiết sản phẩm</label>
+                    <textarea asp-for="Content" class="form-control" rows="4"></textarea>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label asp-for="ProductGroupId" class="form-label">Nhóm sản phẩm</label>
+                        <select asp-for="ProductGroupId" class="form-select" asp-items="ViewBag.ProductGroups">
+                            <option value="">-- Chọn nhóm --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="BrandId" class="form-label">Thương hiệu</label>
+                        <select asp-for="BrandId" class="form-select" asp-items="ViewBag.Brands">
+                            <option value="">-- Chọn thương hiệu --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="CategoryId" class="form-label">Danh mục</label>
+                        <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories">
+                            <option value="">-- Chọn danh mục --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Chọn size sản phẩm</label>
+                    <input type="text" class="form-control mb-2" placeholder="Tìm size..." onkeyup="filterSizes(this)" />
+                    <div id="size-list" class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                        @foreach (var size in ViewBag.AllSizes as List<WebGiayOnline.Models.Size>)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="SelectedSizeIds" value="@size.SizeId" id="size_@size.SizeId" />
+                                <label class="form-check-label" for="size_@size.SizeId">@size.Label</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-1"></i> Lưu sản phẩm
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function filterSizes(input) {
+            var filter = input.value.toLowerCase();
+            var sizeList = document.getElementById("size-list");
+            var items = sizeList.getElementsByClassName("form-check");
+
+            for (var i = 0; i < items.length; i++) {
+                var label = items[i].getElementsByTagName("label")[0];
+                if (label.innerText.toLowerCase().includes(filter)) {
+                    items[i].style.display = "";
+                } else {
+                    items[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+}

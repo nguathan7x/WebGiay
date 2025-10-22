@@ -1,0 +1,489 @@
+﻿@using System.Globalization
+@model WebGiayOnline.Models.Giay
+
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHttpContextAccessor HttpContextAccessor
+
+
+@{
+    var sizes = ViewBag.Sizes as List<ShoeSize>;
+    var images = Model.ProductImages?.ToList() ?? new List<WebGiayOnline.Models.ProductImage>();
+    var mainImageUrl = images.FirstOrDefault()?.ImageUrl ?? Model.ImageUrl ?? "/images/no-image.png";
+    var variants = Model.ProductGroup?.Variants ?? new List<WebGiayOnline.Models.Giay>();
+    
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+    
+
+}
+   
+
+
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Thumbnails -->
+        <div class="col-md-1">
+            <div class="d-flex flex-column gap-2">
+                @foreach (var img in images)
+                {
+                    <img src="@img.ImageUrl"
+                       
+                         style="cursor:pointer; height: 50px; width:50px; object-fit: cover;border-radius: 8px;"
+                         onclick="changeMainImage(this)"
+                         onmouseover="changeMainImage(this)" />
+                }
+            </div>
+        </div>
+
+     
+
+        <!-- Main Image -->
+        <div class="col-md-5">
+            <img id="mainImage" src="@mainImageUrl" alt="@Model.Name" class="img-fluid rounded w-100" />
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-md-6">
+            <h2>@Model.Name</h2>
+        
+            @* <p><strong>Giá gốc:</strong> <del>@Model.Price.ToString("N0") VNĐ</del></p> *@
+
+            @if (ViewBag.DiscountPercent > 0)
+            {
+                <p><strong>@Localizer["Original Price"]:</strong> <del>@Model.Price.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</del></p>
+                <p style="color:red;"><strong>@Localizer["Off"]:</strong> @ViewBag.DiscountPercent% </p>
+                <p><strong>@Localizer["Price After Discount"]:</strong> <span style="color:green;">@ViewBag.FinalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</span></p>
+            }
+            else
+            {
+                <p><strong>@Localizer["Price"]:</strong> <span>@Model.Price.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</span></p>
+            }
+
+         @*    <h4>@Model.Price.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</h4> *@
+            <div class="variants-thumbnails d-flex gap-2 mb-3">
+                @foreach (var variant in variants)
+                {
+                    var thumbUrl = variant.ProductImages.FirstOrDefault()?.ImageUrl ?? variant.ImageUrl ?? "/images/no-image.png";
+                    <img src="@thumbUrl" alt="@variant.Name - @variant.Color" style="height: 70px; width: 70px; cursor:pointer;border-radius: 8px;"
+                         onclick="changeMainImage(this)" />
+                }
+            </div>
+
+            <p class="text-muted">
+                @Localizer["{0}'s {1}", Localizer[Model.Gender], Localizer[Model.Category.Name]]
+            </p>
+  
+          
+
+           @*  <p><strong>Color:</strong> @Model.Color</p> *@
+          @*   <p><strong>Brand:</strong> @(Model.Brand?.Name ?? "No Brand")</p>
+            <p><strong>Category:</strong> @(Model.Category?.Name ?? "No Category")</p> *@
+
+        @*     <!-- Size Selection -->
+            <div class="select-size mt-4">
+                <label><strong>Select Size</strong></label>
+                <div class="size-buttons d-flex flex-wrap gap-2 mt-2">
+                    @{
+                        var sortedSizes = sizes
+                        .OrderBy(s =>
+                        {
+                            var num = new string(s.SizeLabel.Where(c => char.IsDigit(c) || c == '.').ToArray());
+                            return double.TryParse(num, out var val) ? val : double.MaxValue;
+                        }).ToList();
+                    }
+
+                    @foreach (var size in sortedSizes)
+                    {
+                        if (size.IsAvailable)
+                        {
+                            <button type="button" class="btn btn-outline-dark">@size.SizeLabel</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-outline-secondary" disabled style="text-decoration: line-through;">
+                                @size.SizeLabel
+                            </button>
+                        }
+                    }
+                </div>
+            </div> *@
+
+
+            <!-- Size Selection -->
+            @foreach (var giaySize in Model.GiaySizes.OrderBy(s =>
+            {
+               var label = s.Size.Label;
+               var num = new string(label.Where(c => char.IsDigit(c) || c == '.').ToArray());
+               return double.TryParse(num, out var val) ? val : double.MaxValue;
+            }))
+            {
+                var size = giaySize.Size;
+                if (giaySize.Quantity > 0)
+                {
+                    <button type="button" class="btn btn-outline-dark size-button"
+                            data-size-id="@size.SizeId">
+                        @size.Label
+                    </button>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-outline-secondary" disabled style="text-decoration: line-through;">
+                        @size.Label
+                    </button>
+                }
+            }
+
+
+
+            <!-- Add to Bag Form -->
+            <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post" class="mt-4">
+                <input type="hidden" name="productId" value="@Model.GiayId" />
+                <input type="hidden" name="sizeId" id="selectedSizeId" />
+
+
+                <button type="submit" class="btn btn-primary" id="addToBagBtn" disabled>@Localizer["Add to Bag"]</button>
+            </form>
+
+
+
+
+            <div class="d-flex align-items-center gap-3 mt-4">
+               
+
+@* <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
+    <input type="hidden" name="productId" value="@Model.GiayId" />
+
+    <label for="sizeSelect">Chọn size:</label>
+    <select id="sizeSelect" name="sizeId" required>
+        @foreach (var size in Model.GiaySizes) 
+        {
+            <option value="size.SizeId">@size.SizeId</option>
+        }
+    </select>
+
+    <button type="submit" class="btn btn-primary">Add to Bag</button>
+</form> *@
+
+
+               @*  <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
+                    <input type="hidden" name="productId" value="@Model.GiayId" />
+                    <button type="submit" class="btn btn-primary">Add to Bag</button>
+                </form> *@
+
+
+               @*  <button class="btn btn-primary btn-sm rounded-pill px-4 d-flex align-items-center gap-2 shadow-sm ajax-form" type="button">
+                    <i class="fa fa-shopping-bag"></i> Add to Bag
+                </button> *@
+@* 
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-4 d-flex align-items-center gap-2 shadow-sm">
+                    <i class="fa fa-arrow-left"></i> Back to List
+                </a> *@
+
+                @Html.AntiForgeryToken()
+
+                <button id="btnFavorite" class="btn btn-outline-danger btn-sm rounded-pill px-4 d-flex align-items-center gap-2 shadow-sm ajax-form" type="button" style="transition: all 0.3s ease;">
+                    <span id="iconHeart" class="fa @(ViewBag.IsFavorite ? "fa-heart" : "fa-heart-o")"></span> @Localizer["Favorite"]
+                </button>
+            </div>
+            <div>
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                @Html.Raw(Model.Description.Replace("\n", "<br>"))
+
+                @*  <h5>Description</h5>
+            <p>@Model.Description</p> *@
+            }
+            </div>
+
+
+
+            <!-- Link hoặc button để mở modal -->
+            <!-- Link mở modal -->
+            <a href="#"
+               class="btn btn-outline-primary btn-sm rounded-pill px-4"
+               data-bs-toggle="modal"
+               data-bs-target="#descriptionModal"
+               role="button"
+               style="font-weight: 600; box-shadow: 0 2px 6px rgba(0,123,255,0.3);">
+                @Localizer["View Product Details"]
+            </a>
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content rounded-4">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="descriptionModalLabel">@Model.Name</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body d-flex" style="max-height: 400px; overflow-y: auto;">
+                            <!-- Phần ảnh lớn ở bên trái -->
+                            <div style="flex: 1; max-width: 300px; margin-right: 20px;">
+                                <img id="modalMainImage" src="@mainImageUrl" alt="@Model.Name" class="img-fluid rounded w-100 mb-3" style="object-fit: contain; max-height: 300px;" />
+
+                        @*  <div class="d-flex flex-wrap gap-2">
+                                    @foreach (var img in images)
+                                    {
+                                        <img src="@img.ImageUrl" alt="Thumbnail" style="height: 50px; width: 50px; cursor: pointer; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;"
+                                             onclick="changeModalImage(this)" />
+                                    }
+                                </div> *@
+                            </div>
+
+                            <!-- Phần mô tả bên phải -->
+                            <div style="flex: 2; overflow-y: auto;">
+                                <p><strong>@Model.Price.ToString("N0")₫</strong></p>
+                                @if (!string.IsNullOrEmpty(Model.Content))
+                                {
+                                    @Html.Raw(Model.Content.Replace("\n", "<br>"))
+                                }
+                                else
+                                {
+                                    <p>@Localizer["No content"].</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (User.Identity.IsAuthenticated && User.IsInRole(SD.Role_Customer))
+            {
+                <form asp-controller="Review" asp-action="Submit" method="post">
+                    <input type="hidden" name="GiayId" value="@Model.GiayId" />
+                    @if (ViewBag.OrderDetailId != null)
+                    {
+                        <input type="hidden" name="OrderDetailId" value="@ViewBag.OrderDetailId" />
+                    }
+
+
+
+
+                    <div class="mb-2">
+                        <label>@Localizer["Rating"]:</label>
+                        <div class="star-rating">
+                            @for (int i = 5; i >= 1; i--)
+                            {
+                                <input type="radio" id="fa-star-@i" name="Rating" value="@i" />
+                                <label for="fa-star-@i"><i class="fa fa-star"></i></label>
+                            }
+                        </div>
+                    </div>
+
+                   @*  <div class="mb-2">
+                        <label>Đánh giá (1-5):</label>
+                        <input name="Rating" type="number" min="1" max="5" class="form-control" required />
+                    </div> *@
+                    <div class="mb-2">
+                        <label>@Localizer["Comment"]:</label>
+                        <textarea name="Content" class="form-control" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">@Localizer["Send"]</button>
+                </form>
+            }
+
+           @*  <h5 class="mb-3">Đánh giá (@ViewBag.TotalReviews)</h5> *@
+
+            <div class="d-flex align-items-center mb-3">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    if (i <= Math.Floor((double)ViewBag.AvgRating))
+                    {
+                        <span class="text-warning fs-5">★</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted fs-5">★</span>
+                    }
+                }
+                <span class="ms-2">@ViewBag.AvgRating.ToString("0.0") @Localizer["stars"]</span>
+            </div>
+
+            <h5 class="mt-4">@Localizer["Total rating"]:</h5>
+
+            @for (int i = 5; i >= 1; i--)
+            {
+                int count = ViewBag.RatingSummary.ContainsKey(i) ? ViewBag.RatingSummary[i] : 0;
+                <div class="d-flex align-items-center mb-2">
+                    <div class="me-2">@i sao</div>
+                    <div class="progress flex-grow-1 me-2" style="height: 10px;">
+                        <div class="progress-bar bg-warning" role="progressbar"
+                             style="width: @(count * 100 / Math.Max(1, Model.Reviews.Count))%"></div>
+                    </div>
+                    <div>@count @Localizer["reviews"]</div>
+                </div>
+            }
+
+
+            <h5 class="mb-3">
+                @Localizer["Rating"] (@ViewBag.TotalReviews)
+                <a asp-controller="Review" asp-action="ProductReviews" asp-route-giayId="@Model.GiayId" class="ms-2">@Localizer["All reviews"] →</a>
+            </h5>
+
+        @*     @foreach (var review in Model.Reviews.OrderByDescending(r => r.ReviewDate))
+            {
+                <div class="border p-2 mb-3 rounded">
+                    <strong>@review.User.FullName</strong>
+                    <span class="text-muted"> - @review.ReviewDate.ToString("dd MMM yyyy")</span>
+                    <div>
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= review.Rating)
+                            {
+                                <span class="text-warning">★</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">★</span>
+                            }
+                        }
+                    </div>
+                    <p>@review.Content</p>
+                </div>
+            } *@
+
+
+       @*      <h5 class="mt-4">Đánh giá sản phẩm:</h5>
+            @if (Model.Reviews != null && Model.Reviews.Any())
+            {
+                foreach (var review in Model.Reviews)
+                {
+                    <div class="border p-2 mb-2 rounded">
+                        <strong>@review.User?.FullName</strong> - <em>@review.User?.Email</em><br />
+                        <strong>⭐ @review.Rating</strong> - @review.ReviewDate.ToString("dd/MM/yyyy")<br />
+                        <p>@review.Content</p>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Chưa có đánh giá nào.</p>
+            } *@
+
+          
+
+
+        </div>
+    </div>
+</div>
+<h3 class="mt-4">@Localizer["Recommend products"]</h3>
+<div class="row">
+    @foreach (var sp in ViewBag.SanPhamGoiy as List<WebGiayOnline.Models.SanPhamGoiy>)
+    {
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <img src="@sp.ImageUrl" class="card-img-top" alt="@sp.Name" style="height: 200px; object-fit: cover;" />
+                <div class="card-body text-center">
+                    <h5 class="card-title">@sp.Name</h5>
+                    <a href="/Product/Details/@sp.Id" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@* @await Component.InvokeAsync("FavoriteShoes") *@
+
+
+@section Scripts {
+    <script>
+        $(function() {
+            $('#btnFavorite').click(function() {
+                var giayId = @Model.GiayId;
+                var token = $('input[name="__RequestVerificationToken"]').val();
+
+                $.ajax({
+                    url: '/Favorite/ToggleFavorite',
+                    type: 'POST',
+                    data: { giayId: giayId },
+                    headers: { 'RequestVerificationToken': token },
+                    success: function(response) {
+                        if (response.isFavorite) {
+                            $('#iconHeart').removeClass('fa-heart-o').addClass('fa-heart');
+                        } else {
+                            $('#iconHeart').removeClass('fa-heart').addClass('fa-heart-o');
+                        }
+                    }
+                });
+            });
+        });
+
+        function changeMainImage(el) {
+            document.getElementById('mainImage').src = el.src;
+        }
+
+
+    </script>
+}
+
+
+
+<style>
+    .img-thumbnail:hover {
+        border-color: #007bff;
+        box-shadow: 0 0 8px #007bff;
+    }
+
+  
+    #btnFavorite:hover {
+        background-color: #dc3545;
+        color: white;
+        border-color: #dc3545;
+        box-shadow: 0 0 8px rgba(220, 53, 69, 0.6);
+    }
+
+    #btnFavorite:hover #iconHeart {
+        color: white;
+    }
+
+</style>
+@* scrip cho trang details giữa nút add to bag và nút chọn size *@
+<script>
+    const sizeButtons = document.querySelectorAll('.size-button');
+    const selectedSizeIdInput = document.getElementById('selectedSizeId');
+    const addToBagBtn = document.getElementById('addToBagBtn');
+
+    sizeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Bỏ active khỏi nút trước
+            sizeButtons.forEach(btn => btn.classList.remove('active'));
+
+            // Đánh dấu nút được chọn
+            this.classList.add('active');
+
+            // Lưu SizeId vào input hidden
+            selectedSizeIdInput.value = this.dataset.sizeId;
+
+            // Kích hoạt nút "Add to Bag"
+            addToBagBtn.disabled = false;
+        });
+    });
+</script>
+<style>
+    .star-rating {
+        direction: rtl;
+        font-size: 24px;
+        display: inline-flex;
+        gap: 5px;
+    }
+
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating label {
+            color: #ccc;
+            cursor: pointer;
+        }
+
+            .star-rating input[type="radio"]:checked ~ label i,
+            .star-rating label:hover ~ label i,
+            .star-rating label:hover i {
+                color: #ffc107; /* màu vàng */
+            }
+</style>

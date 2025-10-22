@@ -1,0 +1,28 @@
+﻿@model WebGiayOnline.Models.Size
+
+@{
+    ViewData["Title"] = "Edit Size";
+    
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<h2>Edit Size</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="SizeId" />
+
+    <div class="form-group">
+        <label asp-for="Label" class="control-label"></label>
+        <input asp-for="Label" class="form-control" />
+        <span asp-validation-for="Label" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Save Changes</button>
+    <a asp-action="Index" class="btn btn-secondary mt-2">Back to List</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

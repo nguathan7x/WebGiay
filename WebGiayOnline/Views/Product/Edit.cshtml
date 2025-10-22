@@ -1,0 +1,134 @@
+﻿@model WebGiayOnline.Models.Giay
+@{
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Edit Product</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="GiayId" />
+
+    <div class="form-group mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Gender" class="form-label"></label>
+        <select asp-for="Gender" class="form-control">
+            <option value="">-- Select Gender --</option>
+            <option value="Men" selected="@Model.Gender == "Men"">Men</option>
+            <option value="Women" selected="@Model.Gender == "Women"">Women</option>
+            <option value="Unisex" selected="@Model.Gender == "Unisex"">Unisex</option>
+        </select>
+        <span asp-validation-for="Gender" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" type="number" step="0.01" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Color" class="form-label"></label>
+        <input asp-for="Color" class="form-control" />
+        <span asp-validation-for="Color" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Content" class="form-label"></label>
+        <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="ProductGroupId" class="form-label"></label>
+        <select asp-for="ProductGroupId" class="form-control" asp-items="ViewBag.ProductGroups">
+            <option value="">-- Select Product Group --</option>
+        </select>
+        <span asp-validation-for="ProductGroupId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="BrandId" class="form-label"></label>
+        <select asp-for="BrandId" class="form-control" asp-items="ViewBag.Brands">
+            <option value="">-- Select Brand --</option>
+        </select>
+        <span asp-validation-for="BrandId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="CategoryId" class="form-label"></label>
+        <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
+            <option value="">-- Select Category --</option>
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
+    @* <div class="form-group mb-3">
+        <label asp-for="ImageFile" class="form-label">Upload Image (optional)</label>
+        <input asp-for="ImageFile" type="file" class="form-control" />
+        <span asp-validation-for="ImageFile" class="text-danger"></span>
+    </div>
+ *@
+
+    <div class="form-group">
+        <label for="ImageFile">Image</label>
+        <input type="file" class="form-control" id="ImageFile" name="ImageFiles" multiple />
+    </div>
+
+ 
+    @if (Model.ProductImages != null && Model.ProductImages.Any())
+    {
+        <div class="mb-3">
+            <label>Current Images:</label>
+            <div class="d-flex flex-wrap">
+                @foreach (var img in Model.ProductImages)
+                {
+                    <img src="@img.ImageUrl" style="width:100px; margin:5px;" />
+                }
+            </div>
+        </div>
+    }
+
+@* 
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <div class="mb-3">
+            <label class="form-label">Current Image</label><br />
+            <img src="@Model.ImageUrl" alt="Current Image" style="max-width:200px;" />
+        </div>
+    } *@
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Back to List</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Preview ảnh khi chọn file mới
+        document.getElementById("ImageFile").addEventListener("change", function (event) {
+            var file = event.target.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var imgPreview = document.querySelector("img[alt='Current Image']");
+                    if (imgPreview) {
+                        imgPreview.src = e.target.result;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}

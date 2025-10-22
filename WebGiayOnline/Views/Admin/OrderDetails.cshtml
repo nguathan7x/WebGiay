@@ -1,0 +1,40 @@
+﻿@model WebGiayOnline.Models.Order
+
+<h2>Chi tiết đơn hàng #@Model.OrderId</h2>
+
+<p><strong>Khách hàng:</strong> @Model.User.FullName</p>
+<p><strong>Ngày đặt:</strong> @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+<p><strong>Trạng thái hiện tại:</strong> @Model.Status</p>
+<p><strong>Tổng tiền:</strong> @Model.Total.ToString("N0") đ</p>
+
+<h3>🧾 Sản phẩm</h3>
+<ul>
+    @foreach (var item in Model.OrderDetails)
+    {
+        <img src="@item.Giay.ImageUrl" alt="@item.Giay.Name" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; margin-right: 12px;" />
+        <li>@item.Giay.Name - Size: @item.SizeId - SL: @item.Quantity - Màu: @item.Giay.Color</li>
+    }
+</ul>
+
+<h3>📜 Lịch sử trạng thái</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Thời gian</th>
+            <th>Trạng thái cũ</th>
+            <th>Trạng thái mới</th>
+            <th>Người thay đổi</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var h in Model.StatusHistories.OrderByDescending(s => s.ChangedAt))
+        {
+            <tr>
+                <td>@h.ChangedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@h.OldStatus</td>
+                <td>@h.NewStatus</td>
+                <td>@h.ChangedBy</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,55 @@
+﻿
+
+@* 
+<form asp-controller="Payment" asp-action="CreatePaymentUrl" method="post">
+    @Html.AntiForgeryToken()
+    <input type="text" name="FullName" value="@Model.FullName" />
+    <input type="text" name="OrderInfo" value="@Model.OrderInfo" />
+    <input type="text" name="Amount" value="@Model.Amount" />
+    <button type="submit" class="btn btn-primary">Thanh toán</button>
+</form> *@
+@* @section Scripts {
+    <script>
+        document.forms[0].submit();
+    </script>
+} *@
+@* <script>
+    window.onload = function() {
+        document.forms[0].submit();
+    };
+</script>
+ *@
+
+ @model WebGiayOnline.Models.Orders.OrderInfoModel
+
+@{
+    ViewData["Title"] = "Xác nhận thanh toán";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center text-primary mb-4">Xác nhận thông tin thanh toán</h2>
+
+    <div class="card shadow-sm p-4">
+        <div class="mb-3">
+            <strong>Tên khách hàng:</strong> @Model.FullName
+        </div>
+        <div class="mb-3">
+            <strong>Tổng tiền:</strong> @Model.Amount.ToString("N0") VND
+        </div>
+        <div class="mb-3">
+            <strong>Nội dung:</strong> @Model.OrderInfo
+        </div>
+
+        <form asp-action="CreatePaymentUrl" asp-controller="Payment" method="post">
+            <input type="hidden" name="FullName" value="@Model.FullName" />
+            <input type="hidden" name="Amount" value="@(Convert.ToInt32(Model.Amount))" />
+            <input type="hidden" name="OrderInfo" value="@Model.OrderInfo" />
+
+            <div class="d-flex justify-content-between mt-4">
+                <a class="btn btn-secondary" href="/ShoppingCart/Index">Quay lại giỏ hàng</a>
+                <button type="submit" class="btn btn-success">Xác nhận & Thanh toán</button>
+            </div>
+        </form>
+    </div>
+</div>
+ 

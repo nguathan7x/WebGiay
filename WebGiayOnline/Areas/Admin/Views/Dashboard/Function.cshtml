@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="alert alert-success">
+    Xin chào, <strong>@User.Identity.Name</strong>! Bạn đang đăng nhập với vai trò <span class="text-danger">Admin</span>.
+</div>
+
+<ul>
+    <li><a href="/Admin/Product">Quản lý sản phẩm</a></li>
+    <li><a href="/Admin/Category">Quản lý danh mục</a></li>
+    <li><a href="/Admin/User/Index">Quản lý người dùng</a></li>
+    <li><a href="/Identity/Account/Register">Tạo tài khoản mới</a></li>
+
+</ul>

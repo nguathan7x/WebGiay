@@ -1,0 +1,43 @@
+﻿@model WebGiayOnline.Models.Category
+
+@{
+    ViewData["Title"] = "Thêm danh mục mới";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout1.cshtml"; // hoặc layout bạn đang dùng
+}
+
+<div class="container mt-5">
+    <div class="card shadow border-0">
+        <div class="card-body">
+            <h3 class="text-primary fw-bold mb-4">
+                <i class="fas fa-folder-plus me-2"></i> Thêm danh mục mới
+            </h3>
+
+            <form asp-action="Create" method="post">
+                <div class="mb-3">
+                    <label for="Name" class="form-label fw-semibold">Tên danh mục</label>
+                    <input type="text" class="form-control" id="Name" name="Name" placeholder="Nhập tên danh mục" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Description" class="form-label fw-semibold">Mô tả</label>
+                    <textarea class="form-control" id="Description" name="Description" rows="4" placeholder="Nhập mô tả chi tiết..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-1"></i> Lưu danh mục
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

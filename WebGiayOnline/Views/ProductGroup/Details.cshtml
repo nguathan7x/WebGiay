@@ -1,0 +1,32 @@
+﻿@model WebGiayOnline.Models.ProductGroup
+@{
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Nhóm sản phẩm: @Model.GroupName</h2>
+
+@if (Model.Variants != null && Model.Variants.Any())
+{
+    <div class="row">
+        @foreach (var variant in Model.Variants)
+        {
+            var imgUrl = variant.ProductImages.FirstOrDefault()?.ImageUrl ?? "/images/no-image.png";
+
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <img src="@imgUrl" class="card-img-top" alt="@variant.Name" />
+                    <div class="card-body">
+                        <h5>@variant.Name</h5>
+                        <p>Màu: @variant.Color</p>
+                        <p>Giá: @variant.Price.ToString("C0")</p>
+                        <a asp-controller="Product" asp-action="Details" asp-route-id="@variant.GiayId" class="btn btn-primary btn-sm">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>Nhóm chưa có biến thể nào.</p>
+}

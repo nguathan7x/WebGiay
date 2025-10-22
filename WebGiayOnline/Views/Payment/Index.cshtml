@@ -1,0 +1,156 @@
+﻿@*  @model WebGiayOnline.Models.Orders.OrderInfoModel
+
+@{
+    ViewData["Title"] = "Thanh toán MoMo";
+}
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-5 fw-bold text-primary">Thanh toán MoMo với .NET Core, C#</h1>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form asp-action="CreatePaymentUrl" asp-controller="Payment" method="POST" class="border p-4 rounded shadow-sm bg-light">
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label"></label>
+                    <input asp-for="FullName" class="form-control" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Amount" class="form-label"></label>
+                    <input asp-for="Amount" class="form-control" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="OrderInfo" class="form-label"></label>
+                    <textarea asp-for="OrderInfo" class="form-control" rows="3" readonly></textarea>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-success btn-lg">Thanh toán (Checkout)</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> *@
+
+@* @{
+    ViewData["Title"] = "Xác nhận thanh toán";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center text-primary mb-4">Xác nhận thông tin thanh toán</h2>
+
+    <div class="card shadow-sm p-4">
+        <div class="mb-3">
+            <strong>Tên khách hàng:</strong> @Model.FullName
+        </div>
+        <div class="mb-3">
+            <strong>Tổng tiền:</strong> @Model.Amount.ToString("N0") VND
+        </div>
+        <div class="mb-3">
+            <strong>Nội dung:</strong> @Model.OrderInfo
+        </div>
+
+        <form asp-action="CreatePaymentUrl" asp-controller="Payment" method="post">
+            <input type="hidden" name="FullName" value="@Model.FullName" />
+            <input type="hidden" name="Amount" value="@Model.Amount" />
+            <input type="hidden" name="OrderInfo" value="@Model.OrderInfo" />
+
+            <div class="d-flex justify-content-between mt-4">
+                <a class="btn btn-secondary" href="/ShoppingCart">Quay lại giỏ hàng</a>
+                <button type="submit" class="btn btn-success">Xác nhận & Thanh toán</button>
+            </div>
+        </form>
+    </div>
+</div>
+ *@
+@* @{
+    ViewData["Title"] = "Thanh toán MoMo";
+    // var postUrl = "tich-hop-thanh-toan-momo-voi-asp-net-core-7d5e4hP";
+}
+
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-5 fw-bold text-primary">Thanh toán MoMo với .NET Core, C#</h1>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form action="/Payment/CreatePaymentUrl" id="frmCreateOrder" method="POST" class="border p-4 rounded shadow-sm bg-light">
+                <div class="mb-3">
+                    <label for="FullName" class="form-label">Tên khách hàng</label>
+                    <input class="form-control" id="FullName" name="FullName" type="text" placeholder="Nhập họ và tên" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Amount" class="form-label">Số tiền</label>
+                    <input class="form-control" id="Amount" name="Amount" type="number" placeholder="Nhập số tiền (VND)" required min="1000">
+                </div>
+
+                <div class="mb-3">
+                    <label for="OrderInfo" class="form-label">Nội dung thanh toán</label>
+                    <textarea class="form-control" id="OrderInfo" name="OrderInfo" rows="3" placeholder="Ví dụ: Thanh toán đơn hàng #1234" required></textarea>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-success btn-lg">Thanh toán (Checkout)</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+ *@
+
+
+@{
+    ViewData["Title"] = "Home Page";
+    var postUrl = "tich-hop-thanh-toan-momo-voi-asp-net-core-7d5e4hP";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Thanh toán Momo với .NET Core, C# | ProG Coder</h1>
+    <p>Xem thêm nhiều bài viết hay tại <a target="_blank" href="https://progcoder.com">ProG Coder</a>.</p>
+    <p><a target="_blank" href="https://www.progcoder.com/p/@postUrl">Hướng dẫn chi tiết</a>.</p>
+
+    <div class="container">
+        <form action="/Payment/CreatePaymentUrl" id="frmCreateOrder" method="POST">
+            <div class="form-group">
+                <label for="FullName">Tên khách hàng</label>
+                <input class="form-control"
+                       id="FullName"
+                       name="FullName"
+                       type="text"
+                       value="ProG Coder">
+            </div>
+            <br/>
+            <div class="form-group">
+                <label for="Amount">Số tiền</label>
+                <input class="form-control"
+                       id="Amount"
+                       name="Amount"
+                       type="text"
+                       value="10000">
+            </div>
+            <br/>
+            <div class="form-group">
+                <label for="OrderInfo">Nội dung thanh toán</label>
+                <textarea class="form-control" 
+                              cols="20" 
+                              id="OrderInfo" 
+                              name="OrderInfo" 
+                              rows="2">Thanh toán tại ProG Coder</textarea>
+            </div>
+            <br/>
+            <button type="submit" class="btn btn-primary">Thanh toán (Checkout)</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        
+    });
+</script>

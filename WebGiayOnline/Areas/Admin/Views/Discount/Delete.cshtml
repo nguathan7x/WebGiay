@@ -1,0 +1,55 @@
+﻿@model WebGiayOnline.Models.Discount
+
+@{
+    ViewData["Title"] = "Xóa giảm giá";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout1.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h3 class="text-danger fw-bold mb-4">
+                <i class="fas fa-exclamation-triangle me-2"></i> Xác nhận xóa giảm giá
+            </h3>
+
+            <p class="mb-3">Bạn có chắc chắn muốn xóa chương trình giảm giá sau không? Hành động này không thể hoàn tác.</p>
+
+            <div class="mb-4">
+                <dl class="row">
+                    <dt class="col-sm-3 fw-semibold">Tên chương trình:</dt>
+                    <dd class="col-sm-9">@Model.Name</dd>
+
+                    <dt class="col-sm-3 fw-semibold">Phần trăm giảm:</dt>
+                    <dd class="col-sm-9">@Model.Percentage %</dd>
+
+                    <dt class="col-sm-3 fw-semibold">Thời gian áp dụng:</dt>
+                    <dd class="col-sm-9">@Model.StartDate.ToString("dd/MM/yyyy") - @Model.EndDate.ToString("dd/MM/yyyy")</dd>
+
+                    <dt class="col-sm-3 fw-semibold">Trạng thái:</dt>
+                    <dd class="col-sm-9">
+                        @if (Model.IsActive)
+                        {
+                            <span class="badge bg-success">Đang áp dụng</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Không hoạt động</span>
+                        }
+                    </dd>
+                </dl>
+            </div>
+
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="DiscountId" />
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt me-1"></i> Xác nhận xóa
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Hủy bỏ
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

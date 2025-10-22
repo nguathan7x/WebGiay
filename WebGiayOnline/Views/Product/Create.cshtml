@@ -1,0 +1,88 @@
+﻿@model WebGiayOnline.Models.Giay
+@{
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Create New Product</h2>
+
+<form asp-action="Create" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="Name">Name</label>
+        <input type="text" class="form-control" id="Name" name="Name" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Gender"></label>
+        <select asp-for="Gender" class="form-control">
+            <option value="">-- Select Gender --</option>
+            <option>Men</option>
+            <option>Women</option>
+            <option>Unisex</option>
+        </select>
+        <span asp-validation-for="Gender" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Price">Price</label>
+        <input type="number" class="form-control" id="Price" name="Price" />
+    </div>
+ 
+  @*   <div class="form-group">
+        <label for="Size">Size</label>
+        <input type="text" class="form-control" id="Size" name="Size" />
+    </div> *@
+    <div class="form-group">
+        <label for="Color">Color</label>
+        <input type="text" class="form-control" id="Color" name="Color" />
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Content" class="form-label"></label>
+        <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="ImageFile">Image</label>
+        <input type="file" class="form-control" id="ImageFile" name="ImageFiles" multiple />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ProductGroupId">Product Group</label>
+        <select asp-for="ProductGroupId" class="form-control" asp-items="ViewBag.ProductGroups">
+            <option value="">-- Select Group --</option>
+        </select>
+        <span asp-validation-for="ProductGroupId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="BrandId"></label>
+        <select asp-for="BrandId" class="form-control" asp-items="ViewBag.Brands">
+            <option value="">--Select Brand--</option>
+        </select>
+        <span asp-validation-for="BrandId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CategoryId"></label>
+        <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
+            <option value="">--Select Category--</option>
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
+ @*    <div class="form-group">
+        <label>Choose Sizes</label>
+        @foreach (var size in ViewBag.AllSizes as List<WebGiayOnline.Models.Size>)
+        {
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="SelectedSizeIds" value="@size.SizeId" id="size_@size.SizeId" />
+                <label class="form-check-label" for="size_@size.SizeId">@size.Label</label>
+            </div>
+        }
+    </div> *@
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>

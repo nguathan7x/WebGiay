@@ -1,0 +1,18 @@
+﻿@model WebGiayOnline.Models.ProductGroup
+
+@* <h3>@Model.Name</h3> *@
+@{
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+}
+<div class="d-flex gap-3 flex-wrap">
+    @foreach (var variant in Model.Variants)
+    {
+        var thumbnailUrl = variant.ProductImages.FirstOrDefault()?.ImageUrl ?? "/images/no-image.png";
+
+        <div style="width: 120px; cursor: pointer; text-align:center;">
+            <img src="@thumbnailUrl" alt="Thumbnail" style="width: 100%;" />
+            <p style="margin-top: 5px;">Màu: @variant.Color</p>
+        </div>
+    }
+</div>

@@ -1,0 +1,72 @@
+﻿body {
+    font-family: Arial, sans-serif;
+}
+
+.card img {
+    height: 250px;
+    object-fit: cover;
+}
+/* Giảm độ sáng của hình ảnh nền */
+.carousel-image-overlay {
+    position: relative;
+}
+
+    .carousel-image-overlay img {
+        filter: brightness(60%); /* Giảm độ sáng của hình ảnh */
+    }
+
+/* Tạo overlay cho carousel */
+.carousel-item {
+    position: relative;
+}
+
+.carousel-caption {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    text-align: center;
+    z-index: 2;
+}
+
+    .carousel-caption h5 {
+        font-size: 2rem; /* Tăng cỡ chữ tiêu đề */
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Tạo bóng cho chữ */
+    }
+
+    .carousel-caption p {
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin: 10px 0;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Tạo bóng cho chữ */
+    }
+
+    /* Đặt kiểu cho các nút để chữ trong nút nổi bật */
+    .carousel-caption .btn {
+        font-size: 1.1rem; /* Tăng kích thước chữ trong nút */
+        padding: 10px 20px;
+        font-weight: bold; /* Làm chữ đậm */
+        border-radius: 25px; /* Làm bo tròn các góc của nút */
+        text-transform: uppercase; /* Viết hoa các chữ trong nút */
+    }
+
+/* Các nút cho từng slide */
+.carousel-item:nth-child(1) .btn-primary {
+    background-color: #007bff; /* Màu xanh cho nút "Xem Ngay" */
+}
+
+.carousel-item:nth-child(2) .btn-danger {
+    background-color: #dc3545; /* Màu đỏ cho nút "Mua Ngay" */
+}
+
+.carousel-item:nth-child(3) .btn-success {
+    background-color: #28a745; /* Màu xanh lá cho nút "Khám Phá" */
+}
+
+/* Thêm hiệu ứng hover cho nút */
+.carousel-caption .btn:hover {
+    opacity: 0.9; /* Làm mờ nút khi hover */
+    transform: scale(1.05); /* Tăng nhẹ kích thước nút khi hover */
+}

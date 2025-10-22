@@ -1,0 +1,33 @@
+﻿@model IEnumerable<WebGiayOnline.Models.ProductGroup>
+@{
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Danh sách nhóm sản phẩm</h2>
+
+<p><a asp-action="Create" class="btn btn-primary">Thêm nhóm mới</a></p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Tên nhóm</th>
+            <th>Số biến thể</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var group in Model)
+        {
+            <tr>
+                <td>@group.GroupName</td>
+                <td>@(group.Variants?.Count ?? 0)</td>
+
+                <td>
+                    <a asp-action="Details" asp-route-id="@group.ProductGroupId" class="btn btn-info btn-sm">Xem</a>
+                    <a asp-action="Edit" asp-route-id="@group.ProductGroupId" class="btn btn-warning btn-sm">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@group.ProductGroupId" class="btn btn-danger btn-sm">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

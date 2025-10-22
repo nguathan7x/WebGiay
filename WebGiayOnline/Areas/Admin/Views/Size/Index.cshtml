@@ -1,0 +1,54 @@
+﻿@model IEnumerable<WebGiayOnline.Models.Size>
+
+@{
+    ViewData["Title"] = "Danh sách kích cỡ";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout1.cshtml"; // layout admin đang dùng
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="text-primary fw-bold mb-0">
+                    <i class="fas fa-ruler-horizontal me-2"></i> Danh sách kích cỡ
+                </h3>
+                <a asp-action="Create" class="btn btn-success">
+                    <i class="fas fa-plus me-1"></i> Thêm kích cỡ mới
+                </a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th class="text-center">Kích cỡ</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var size in Model)
+                        {
+                            <tr>
+                                <td class="fw-semibold text-center">@size.Label</td>
+                                <td class="text-center">
+                                    <a class="btn btn-sm btn-outline-primary me-1" asp-action="Edit" asp-route-id="@size.SizeId">
+                                        <i class="fas fa-edit"></i> Sửa
+                                    </a>
+                                    <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@size.SizeId">
+                                        <i class="fas fa-trash"></i> Xoá
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="2" class="text-center text-muted fst-italic">Không có kích cỡ nào.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

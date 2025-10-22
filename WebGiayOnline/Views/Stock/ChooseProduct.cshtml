@@ -1,0 +1,32 @@
+﻿@{
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+}
+@foreach (var product in Model)
+{
+    <div>
+        <a asp-action="EditBulk" asp-route-giayId="@product.GiayId">@product.Name</a>
+
+        @if (!string.IsNullOrEmpty(product.Color))
+        {
+            <span class="badge" style="background-color:@product.Color; color: white; padding: 5px; margin-left: 10px;">
+                @product.Color
+            </span>
+        }
+        else
+        {
+            <span class="badge" style="background-color:gray; color: white; padding: 5px; margin-left: 10px;">
+                No Color
+            </span>
+        }
+
+    </div>
+    <br />
+}
+
+@* @foreach (var product in Model)
+{
+    <a asp-action="EditBulk" asp-route-giayId="@product.GiayId">@product.Name</a>
+    <br />
+}
+ *@

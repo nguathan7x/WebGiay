@@ -1,0 +1,121 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    // Layout = "/Views/Shared/_Layout.cshtml";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+    ViewData["ParentLayout"] = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
+}
+
+<h3 class="mb-4">@ViewData["Title"]</h3>
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<form method="post" enctype="multipart/form-data">
+    <div class="row">
+        <!-- Cột trái: Avatar -->
+        <div class="col-md-4 text-center">
+            <div class="card shadow-sm p-3 mb-4 rounded">
+                <h5 class="mb-3">Avatar</h5>
+
+                <!-- Avatar có thể click để mở modal -->
+                <img id="avatarPreview"
+                     src="@(!string.IsNullOrEmpty(Model.Input.AvatarUrl) ? Model.Input.AvatarUrl : "/images/default-avatar.png")"
+                     alt="Avatar"
+                     class="rounded-circle border mx-auto d-block"
+                     style="width: 150px; height: 150px; object-fit: cover; margin-bottom: 10px; cursor: pointer;"
+                     data-bs-toggle="modal" data-bs-target="#avatarModal" />
+
+
+                <div class="form-group mt-2">
+                    <input asp-for="Input.AvatarImage" type="file" class="d-none" id="avatarInput" />
+
+                    <label for="avatarInput" class="btn btn-outline-pink btn-sm rounded-pill">
+                        <i class="bi bi-camera-fill"></i>
+                    </label>
+
+                    <span asp-validation-for="Input.AvatarImage" class="text-danger"></span>
+                </div>
+
+                @* <div class="form-group mt-2">
+                    <label asp-for="Input.AvatarImage" class="form-label">Chọn ảnh mới</label>
+                    <input asp-for="Input.AvatarImage" type="file" class="form-control" id="avatarInput" />
+                    <span asp-validation-for="Input.AvatarImage" class="text-danger"></span>
+                </div> *@
+            </div>
+        </div>
+
+        <!-- Modal Bootstrap -->
+        <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body text-center p-0">
+                        <img id="avatarModalImage"
+                             src="@(!string.IsNullOrEmpty(Model.Input.AvatarUrl) ? Model.Input.AvatarUrl : "/images/default-avatar.png")"
+                             alt="Avatar Preview"
+                             class="img-fluid rounded"
+                             style="max-height: 90vh; object-fit: contain;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Cột phải: Thông tin cá nhân -->
+        <div class="col-md-8">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Username" class="form-control" disabled />
+                <label asp-for="Username"></label>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.FullName" class="form-control" />
+                <label asp-for="Input.FullName"></label>
+                <span asp-validation-for="Input.FullName" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Age" class="form-control" />
+                <label asp-for="Input.Age"></label>
+                <span asp-validation-for="Input.Age" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Address" class="form-control" />
+                <label asp-for="Input.Address"></label>
+                <span asp-validation-for="Input.Address" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.PhoneNumber" class="form-control" />
+                <label asp-for="Input.PhoneNumber"></label>
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Lưu thay đổi</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Cập nhật preview ảnh khi chọn file mới
+        document.getElementById('avatarInput').addEventListener('change', function(event) {
+            const input = event.target;
+            const preview = document.getElementById('avatarPreview');
+            const modalImage = document.getElementById('avatarModalImage');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    modalImage.src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+    </script>
+}

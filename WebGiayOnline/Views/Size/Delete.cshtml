@@ -1,0 +1,14 @@
+﻿@model WebGiayOnline.Models.Size
+@{
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Delete Size</h2>
+
+<p>Are you sure you want to delete size: <strong>@Model.Label</strong>?</p>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="SizeId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Stock Management";
+}
+
+<h2>Manage Stock Quantity</h2>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-success">@ViewBag.Message</div>
+}
+
+<form method="post" asp-action="Index">
+    <div class="mb-3">
+        <label for="productId">Product</label>
+        <select id="productId" name="productId" class="form-select" required>
+            <option value="">-- Select product --</option>
+            @foreach (var p in ViewBag.Products as SelectList)
+            {
+                <option value="@p.Value">@p.Text</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="sizeId">Size</label>
+        <select id="sizeId" name="sizeId" class="form-select" required>
+            <option value="">-- Select size --</option>
+            @foreach (var s in ViewBag.Sizes as List<WebGiayOnline.Models.Size>)
+            {
+                <option value="@s.SizeId">@s.Label</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="quantity">Quantity</label>
+        <input type="number" id="quantity" name="quantity" class="form-control" min="0" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Stock</button>
+</form>

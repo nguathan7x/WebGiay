@@ -1,0 +1,128 @@
+﻿@* @{
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout !=  null)
+    {
+        Layout = parentLayout.ToString();
+    }
+    else
+    {
+        
+    Layout = "~/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
+
+
+        // Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    }
+}
+
+<h1>Manage your account</h1>
+
+<div>
+    <h2>Change your account settings</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_ManageNav" />
+        </div>
+        <div class="col-md-9">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}
+ *@
+
+@{
+    Layout = ViewData["ParentLayout"] as string;
+}
+
+<body>
+    <div class="d-flex" id="layout-wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar" class="bg-dark text-white p-3 sidebar">
+            <button id="toggleSidebar" class="btn btn-outline-light mb-3">
+                <i class="bi bi-list"></i> Menu
+            </button>
+
+            <ul class="nav nav-pills flex-column gap-2">
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center text-white" asp-page="./Index">
+                        <i class="bi bi-person-fill me-2"></i> Hồ sơ
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center text-white" asp-page="./Email">
+                        <i class="bi bi-envelope-fill me-2"></i> Email
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center text-white" asp-page="./ChangePassword">
+                        <i class="bi bi-lock-fill me-2"></i> Mật khẩu
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center text-white" asp-page="./PersonalData">
+                        <i class="bi bi-folder-fill me-2"></i> Dữ liệu cá nhân
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+
+        <!-- Nội dung chính -->
+        <div class="flex-grow-1 p-4" id="main-content">
+            <!-- Nút mở lại sidebar -->
+            <button id="showSidebar" class="btn btn-dark mb-3 d-none">
+                <i class="bi bi-list"></i> Mở menu
+            </button>
+            @RenderBody()
+        </div>
+    </div>
+</body>
+    @* Đây là nơi đúng để Render Section Scripts *@
+    @RenderSection("Scripts", required: false)
+
+<script>
+    const toggleButton = document.getElementById("toggleSidebar");
+    const showButton = document.getElementById("showSidebar");
+    const sidebar = document.getElementById("sidebar");
+    const mainContent = document.getElementById("main-content");
+
+    toggleButton?.addEventListener("click", function() {
+        sidebar.classList.add("sidebar-collapsed");
+        mainContent.classList.add("collapsed-main");
+
+        toggleButton.classList.add("d-none");
+        showButton.classList.remove("d-none");
+    });
+
+    showButton?.addEventListener("click", function() {
+        sidebar.classList.remove("sidebar-collapsed");
+        mainContent.classList.remove("collapsed-main");
+
+        toggleButton.classList.remove("d-none");
+        showButton.classList.add("d-none");
+    });
+</script>
+
+
+<style>
+    .sidebar {
+        width: 225px;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-collapsed {
+        margin-left: -225px;
+    }
+
+    #main-content {
+        transition: margin-left 0.3s ease;
+    }
+
+    .collapsed-main {
+        margin-left: 0;
+    }
+</style>
+

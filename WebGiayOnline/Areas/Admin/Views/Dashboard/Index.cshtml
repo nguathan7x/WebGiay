@@ -1,0 +1,169 @@
+﻿@using System.Text.Json
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<div class="container mt-4">
+    <h3 class="mb-4">📊 Today's Overview (@DateTime.Today.ToString("dd/MM/yyyy"))</h3>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card bg-success text-white shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">🧾 Products Sold</h5>
+                    <p class="card-text fs-3">@ViewBag.TotalSoldToday</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">💰 Today's Revenue</h5>
+                    <p class="card-text fs-3">@string.Format("{0:N0} ₫", ViewBag.TotalRevenueToday)</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-primary text-white shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">📦 Total Orders</h5>
+                    <p class="card-text fs-3">@ViewBag.AllOrders</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="mt-5">🔥 Top 5 Best-Selling Products</h4>
+    <table class="table table-bordered table-hover mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>Product Name</th>
+                <th>Units Sold</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.TopProducts)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.TotalSold</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4 class="mt-5">📦 Order Status Summary</h4>
+    <div class="row g-3 text-center">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title text-warning">⏳ Pending</h6>
+                    <p class="fs-4">@ViewBag.PendingCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title text-primary">✅ Confirmed</h6>
+                    <p class="fs-4">@ViewBag.ConfirmedCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title text-success">✔ Completed</h6>
+                    <p class="fs-4">@ViewBag.CompletedCount</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h4 class="mb-3">📊 Order Status Chart</h4>
+        <canvas id="orderStatusChart" height="100"></canvas>
+    </div>
+
+    <div class="mt-5">
+        <h4 class="mb-3">📈 Revenue (Last 7 Days)</h4>
+        <canvas id="revenueChart" height="100"></canvas>
+    </div>
+</div>
+
+<script>
+    const ctx = document.getElementById('orderStatusChart').getContext('2d');
+
+    const data = {
+        labels: ['Pending', 'Confirmed', 'Completed'],
+        datasets: [{
+            label: 'Number of Orders',
+            data: [
+    @ViewBag.OrderStatusData.Pending,
+    @ViewBag.OrderStatusData.Confirmed,
+    @ViewBag.OrderStatusData.Completed
+                    ],
+            backgroundColor: [
+                'rgba(255, 206, 86, 0.7)',    // Yellow
+                'rgba(54, 162, 235, 0.7)',    // Blue
+                'rgba(75, 192, 192, 0.7)'     // Green
+            ],
+            borderColor: [
+                'rgba(255, 206, 86, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(75, 192, 192, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    const orderStatusChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+
+    const revenueChart = new Chart(revenueCtx, {
+        type: 'line',
+        data: {
+            labels: @Html.Raw(Json.Serialize(ViewBag.RevenueByDayLabels)),
+            datasets: [{
+                label: 'Revenue (VND)',
+                data: @Html.Raw(Json.Serialize(ViewBag.RevenueByDayValues)),
+                fill: true,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                tension: 0.4,
+                pointBackgroundColor: 'rgba(54, 162, 235, 1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString('vi-VN') + ' ₫';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>

@@ -1,0 +1,45 @@
+﻿@page
+@model ConfirmEmailModel
+@{
+    ViewData["Title"] = "Email Confirmation";
+    // Layout = "_Layout"; // or set to null if you want a standalone page
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #fff;
+        color: #000;
+    }
+
+    .confirm-container {
+        max-width: 600px;
+        margin: 100px auto;
+        padding: 30px;
+        background-color: #f9f9f9;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    .status-message {
+        font-size: 1.1rem;
+        color: #333;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+    </style>
+
+<div class="confirm-container">
+    <h1>@ViewData["Title"]</h1>
+    <div class="status-message">
+        <partial name="_StatusMessage" model="Model.StatusMessage" />
+    </div>
+</div>

@@ -1,0 +1,27 @@
+﻿@model WebGiayOnline.Models.ProductGroup
+
+@{
+    ViewData["Title"] = "Các biến thể sản phẩm";
+}
+
+<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
+    @foreach (var variant in Model.Variants)
+    {
+        var thumbnailUrl = variant.ProductImages?.FirstOrDefault()?.ImageUrl ?? "/images/no-image.png";
+        <div class="col">
+            <div class="card h-100 shadow-sm text-center border-0" style="cursor: pointer;">
+                <img src="@thumbnailUrl"
+                     class="card-img-top img-fluid"
+                     alt="@variant.Name"
+                     style="height: 100px; object-fit: cover;" />
+
+                <div class="card-body p-2">
+                    <span class="badge rounded-pill"
+                          style="background-color:@(string.IsNullOrEmpty(variant.Color) ? "gray" : variant.Color); color: white;">
+                        @(string.IsNullOrEmpty(variant.Color) ? "Không màu" : variant.Color)
+                    </span>
+                </div>
+            </div>
+        </div>
+    }
+</div>

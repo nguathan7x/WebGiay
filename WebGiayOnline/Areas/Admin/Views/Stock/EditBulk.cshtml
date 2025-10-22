@@ -1,0 +1,60 @@
+﻿@model WebGiayOnline.Models.Giay
+
+@{
+    ViewData["Title"] = "Cập nhật tồn kho - " + Model.Name;
+    Layout = "~/Areas/Admin/Views/Shared/_Layout1.cshtml"; // Hoặc layout của bạn
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h3 class="text-primary fw-bold mb-4">
+                <i class="fas fa-boxes me-2"></i> Cập nhật số lượng tồn kho cho: <span class="text-dark">@Model.Name</span>
+            </h3>
+
+            <form method="post" asp-action="EditBulk" asp-controller="Stock">
+                <input type="hidden" name="GiayId" value="@Model.GiayId" />
+
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle text-center">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Size</th>
+                                <th>Số lượng hiện tại</th>
+                                <th>Cập nhật số lượng mới</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var size in ViewBag.AllSizes as List<WebGiayOnline.Models.Size>)
+                            {
+                                var giaySize = ViewBag.CurrentStocks as Dictionary<int, int>;
+                                int currentQty = 0;
+                                if (giaySize != null && giaySize.ContainsKey(size.SizeId))
+                                {
+                                    currentQty = giaySize[size.SizeId];
+                                }
+                                <tr>
+                                    <td>@size.Label</td>
+                                    <td>@currentQty</td>
+                                    <td>
+                                        <input type="number" name="Quantities[@size.SizeId]" min="0"
+                                               class="form-control text-center" value="@currentQty" />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Lưu thay đổi
+                    </button>
+                    <a asp-action="ChooseProduct" asp-controller="Stock" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

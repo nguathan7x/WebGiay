@@ -1,0 +1,48 @@
+﻿@page
+@model LockoutModel
+@{
+    ViewData["Title"] = "Account Locked";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #fff;
+            color: #000;
+            margin: 0;
+            padding: 0;
+        }
+
+        .lockout-container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 30px;
+            background-color: #fefefe;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #d8000c;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="lockout-container">
+        <h1>@ViewData["Title"]</h1>
+        <p>Your account has been temporarily locked. Please try again later.</p>
+    </div>
+</body>
+</html>

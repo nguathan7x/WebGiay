@@ -1,0 +1,133 @@
+﻿@page
+@model LoginWith2faModel
+@{
+    ViewData["Title"] = "Two-Factor Authentication";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #fff;
+            color: #000;
+            margin: 0;
+            padding: 0;
+        }
+
+        .twofa-container {
+            max-width: 500px;
+            margin: 100px auto;
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        p {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #444;
+            margin-bottom: 30px;
+        }
+
+        .form-floating {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+            border-radius: 8px;
+                        border: 1px solid #ccc;
+        }
+
+        .btn-black {
+            background-color: #000;
+            color: #fff;
+            padding: 12px;
+            width: 100%;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+            .btn-black:hover {
+                background-color: #333;
+            }
+
+        .checkbox {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            margin-left: 8px;
+        }
+
+        .text-danger {
+            color: #d8000c;
+            font-size: 0.9rem;
+        }
+
+        .recovery-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+            .recovery-link a {
+                color: #000;
+                text-decoration: underline;
+            }
+    </style>
+</head>
+<body>
+    <div class="twofa-container">
+        <h1>@ViewData["Title"]</h1>
+        <p>Your login is protected with an authenticator app. Please enter your verification code below.</p>
+
+        <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
+            <input asp-for="RememberMe" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+            <div class="form-floating">
+                <label asp-for="Input.TwoFactorCode">Authentication Code</label>
+                <input asp-for="Input.TwoFactorCode" class="form-control" autocomplete="off" />
+                <span asp-validation-for="Input.TwoFactorCode" class="text-danger"></span>
+            </div>
+
+            <div class="checkbox">
+                <label asp-for="Input.RememberMachine">
+                    <input asp-for="Input.RememberMachine" />
+                    @Html.DisplayNameFor(m => m.Input.RememberMachine)
+                </label>
+            </div>
+
+            <button type="submit" class="btn-black">Verify</button>
+        </form>
+
+        <div class="recovery-link">
+            <p>
+                Don't have your authenticator device? You can
+                <a id="recovery-code-login"
+                   asp-page="./LoginWithRecoveryCode"
+                   asp-route-returnUrl="@Model.ReturnUrl">log in with a recovery code</a>.
+            </p>
+        </div>
+    </div>
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>

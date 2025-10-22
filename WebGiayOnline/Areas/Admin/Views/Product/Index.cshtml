@@ -1,0 +1,75 @@
+﻿@using System.Globalization
+@model IEnumerable<WebGiayOnline.Models.Giay>
+
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout1.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary mb-4 text-center">Danh sách sản phẩm</h2>
+
+    <form method="get" asp-action="Index" class="row g-3 mb-4">
+        <div class="col-md-5">
+            <input type="text" name="searchQuery" value="@ViewBag.SearchQuery" placeholder="Tìm sản phẩm..." class="form-control" />
+        </div>
+
+        <div class="col-md-3">
+            <select name="gender" class="form-select">
+                <option value="">-- Tất cả giới tính --</option>
+                @foreach (var g in ViewBag.AvailableGenders as List<string>)
+                {
+                    <option value="@g" selected="@(g == ViewBag.CurrentGender ? "selected" : null)">
+                        @(g == "Men" ? "Nam" : g == "Women" ? "Nữ" : g)
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+        </div>
+
+        <div class="col-md-2 text-end">
+            <a asp-action="Create" class="btn btn-success w-100">Thêm mới</a>
+        </div>
+    </form>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning">Không tìm thấy sản phẩm nào phù hợp.</div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var p in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <img src="@p.ImageUrl" class="card-img-top" style="height: 220px; object-fit: cover;" alt="@p.Name" />
+
+                        <div class="card-body">
+                            <h5 class="card-title">@p.Name</h5>
+                            <p class="card-text text-muted">@p.Gender's Shoes</p>
+                            <p class="card-text text-success fw-semibold">
+                                @p.Price.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                            </p>
+
+                            <div class="d-flex gap-2">
+                                <a asp-action="Edit" asp-route-id="@p.GiayId" class="btn btn-sm btn-outline-warning">Sửa</a>
+                                <a asp-action="Delete" asp-route-id="@p.GiayId" class="btn btn-sm btn-outline-danger">Xóa</a>
+                            </div>
+                        </div>
+
+                        @if (p.ProductGroup != null)
+                        {
+                            <div class="card-footer bg-light small">
+                                Nhóm: @p.ProductGroup.GroupName
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

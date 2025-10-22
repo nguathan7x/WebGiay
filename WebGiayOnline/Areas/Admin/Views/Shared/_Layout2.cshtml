@@ -1,0 +1,109 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebGiayOnline</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"
+          rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Thêm vào _Layout.cshtml phần <head> -->
+    @* <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter&display=swap" rel="stylesheet"> *@
+
+   @*  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> *@
+    <title>Flexy Free Bootstrap Admin Template by WrapPixel</title>
+    <link rel="shortcut icon" type="image/png" href="/assets/images/logos/favicon.png" />
+    <link rel="stylesheet" href="/assets/css/styles.min.css" />
+</head>
+<body>
+    <div style="display: flex; min-height: 100vh;">
+        <aside style="width: 250px; background: gray; flex-shrink: 0;">
+            <p>side bar</p>
+        </aside>
+        <div style="flex: 1; padding: 20px; background: lightblue;">
+            @RenderBody()
+        </div>
+    </div>
+
+    <!-- PHẦN FOOTER ĐƯỢC NÂNG CẤP -->
+
+    <footer class="border-top bg-light text-muted mt-4">
+       
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+       
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function bindAjaxHandlers(containerSelector = 'body') {
+        // Bắt sự kiện click cho các link có class 'ajax-link'
+        $(containerSelector).on('click', '.ajax-link', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+
+            $.get(url)
+                .done(function(data) {
+                    $('#main-content').html(data);
+                    history.pushState(null, '', url);
+                });
+        });
+
+        // Bắt sự kiện submit cho các form có class 'ajax-form'
+        $(containerSelector).on('submit', '.ajax-form', function(e) {
+            e.preventDefault();
+            const $form = $(this);
+            const url = $form.attr('action') || window.location.pathname;
+            const method = $form.attr('method') || 'get';
+            const data = $form.serialize();
+
+            if (method.toLowerCase() === 'get') {
+                $.get(url, data)
+                    .done(function(response) {
+                        $('#main-content').html(response);
+                        history.pushState(null, '', url + '?' + data);
+                    });
+            } else {
+                $.post(url, data)
+                    .done(function(response) {
+                        $('#main-content').html(response);
+                        history.pushState(null, '', url);
+                    });
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        bindAjaxHandlers();
+
+        // Bắt sự kiện back/forward trình duyệt
+        window.onpopstate = function() {
+            $.get(location.href).done(function(data) {
+                $('#main-content').html(data);
+            });
+        };
+    });
+</script>
+
+
+<script>
+    function changeMainImage(el) {
+        var newSrc = el.getAttribute('src');
+        if (newSrc) {
+            document.getElementById('mainImage').src = newSrc;
+        }
+    }
+</script>
+

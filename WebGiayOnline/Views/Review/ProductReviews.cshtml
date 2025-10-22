@@ -1,0 +1,91 @@
+﻿@using System.Linq
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHttpContextAccessor HttpContextAccessor
+@model List<WebGiayOnline.ViewModels.ReviewDisplayViewModel>
+@{
+    ViewData["Title"] = "Đánh giá sản phẩm";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <h2 class="mb-3 text-center">
+                @Localizer["Review"]:
+                <span class="text-primary">@ViewBag.GiayName</span>
+            </h2>
+
+            <div class="mb-3 text-start">
+                <a asp-controller="Product" asp-action="Details" asp-route-id="@ViewBag.GiayId" class="text-decoration-none text-secondary">
+                    ← @Localizer["Return to product details"]
+                </a>
+            </div>
+
+            @if (ViewBag.TotalReviews > 0)
+            {
+                <div class="border rounded p-3 bg-light shadow-sm mb-4">
+                    <h4 class="mb-3">@Localizer["Summary of Reviews"]</h4>
+                    <p>
+                        <strong>@Localizer["Average"]:</strong>
+                        <span class="text-warning">@ViewBag.AvgRating.ToString("0.0") ★</span>
+                    </p>
+
+                    @for (int i = 5; i >= 1; i--)
+                    {
+                        int count = ViewBag.RatingSummary.ContainsKey(i) ? ViewBag.RatingSummary[i] : 0;
+                        double percent = count * 100.0 / (int)ViewBag.TotalReviews;
+
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="me-2">@i ★</span>
+                            <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                <div class="progress-bar bg-warning" style="width: @percent%"></div>
+                            </div>
+                            <small class="text-muted">@count @Localizer["reviews"]</small>
+                        </div>
+                    }
+                </div>
+            }
+
+            @if (!Model.Any())
+            {
+                <p class="text-muted fst-italic">@Localizer["This product hasn't received any reviews yet"].</p>
+            }
+            else
+            {
+                @foreach (var review in Model)
+                {
+                    var avatarUrl = string.IsNullOrEmpty(review.AvatarUrl)
+                    ? "/images/default-avatar.png"
+                    : review.AvatarUrl;
+
+                    <div class="d-flex border rounded p-3 mb-3 shadow-sm bg-white">
+                        <img src="@avatarUrl"
+                             alt="avatar"
+                             class="rounded-circle me-3"
+                             style="width: 48px; height: 48px; object-fit: cover;" />
+
+                        <div>
+                            <div class="fw-bold">
+                                @review.FullName
+                                <small class="text-muted ms-2">(@review.ReviewDate.ToString("dd/MM/yyyy"))</small>
+                            </div>
+
+                            <div class="mb-1">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <span class="@(i <= review.Rating ? "text-warning" : "text-muted")">★</span>
+                                }
+                            </div>
+
+                            <p class="mb-0">@review.Content</p>
+                        </div>
+                    </div>
+                }
+            }
+
+        </div>
+    </div>
+</div>

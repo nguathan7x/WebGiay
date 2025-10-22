@@ -1,0 +1,24 @@
+﻿@model WebGiayOnline.Models.Size
+
+@{
+    ViewData["Title"] = "Create Size";
+}
+
+<h2>Create Size</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Label" class="control-label"></label>
+        <input asp-for="Label" class="form-control" />
+        <span asp-validation-for="Label" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

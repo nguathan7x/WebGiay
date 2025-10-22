@@ -1,0 +1,52 @@
+﻿@model List<WebGiayOnline.Models.Order>
+
+<h2>📦 Quản lý đơn hàng</h2>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Mã</th>
+            <th>Khách hàng</th>
+            <th>Ngày đặt</th>
+            <th>Trạng thái</th>
+            <th>Tổng</th>
+          @*   <th>Chi tiết</th> *@
+            <th>Thay đổi trạng thái</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>#@order.OrderId</td>
+                <td>@order.User?.UserName</td>
+                <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@order.Status</td>
+                <td>@order.Total.ToString("N0") đ</td>
+            @*     <td>
+                    <ul>
+                        @foreach (var item in order.OrderDetails)
+                        {
+                            <img src="@item.Giay.ImageUrl" alt="@item.Giay.Name" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; margin-right: 12px;" />
+                            <li>@item.Giay.Name - Size: @item.SizeId - SL: @item.Quantity - Màu: @item.Giay.Color</li>
+                        }
+                    </ul>
+                </td> *@
+                <td>
+                    <form asp-action="UpdateStatus" asp-controller="Admin" method="post" class="d-flex">
+                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                        <select name="newStatus" class="form-select me-2">
+                            <option value="Chờ xác nhận" selected="@(order.Status == "Chờ xác nhận")">Chờ xác nhận</option>
+                            <option value="Đã xác nhận" selected="@(order.Status == "Đã xác nhận")">Đã xác nhận</option>
+                            <option value="Hoàn thành" selected="@(order.Status == "Hoàn thành")">Hoàn thành</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </form>
+                    <a asp-action="OrderDetails" asp-controller="Admin" asp-route-orderId="@order.OrderId">Xem chi tiết</a>
+                </td>
+            </tr>           
+        }
+     
+
+    </tbody>
+</table>

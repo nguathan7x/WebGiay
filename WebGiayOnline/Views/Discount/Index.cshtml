@@ -1,0 +1,50 @@
+﻿@model IEnumerable<WebGiayOnline.Models.Discount>
+
+@{
+    ViewData["Title"] = "Danh sách giảm giá";
+
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Danh sách chương trình giảm giá</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary ajax-link">Tạo mới</a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>Tên chương trình</th>
+            <th>Phần trăm (%)</th>
+            <th>Thời gian áp dụng</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Percentage %</td>
+                <td>@item.StartDate.ToShortDateString() - @item.EndDate.ToShortDateString()</td>
+                <td>
+                    @if (item.IsActive)
+                    {
+                        <span class="text-success">Kích hoạt</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Không hoạt động</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.DiscountId" class="btn btn-sm btn-warning">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@item.DiscountId" class="btn btn-sm btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

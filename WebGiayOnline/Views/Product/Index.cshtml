@@ -1,0 +1,52 @@
+﻿@using System.Globalization
+@model IEnumerable<WebGiayOnline.Models.Giay>
+@{
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+}
+
+<form method="get" asp-action="Index" class="d-flex mb-4 ajax-form">
+    <input type="text" name="searchQuery" value="@ViewBag.SearchQuery" placeholder="Search products..." class="form-control me-2" />
+
+    <select name="gender" class="form-select w-auto me-2">
+        <option value="">All Genders</option>
+        @foreach (var g in ViewBag.AvailableGenders as List<string>)
+        {
+            <option value="@g" selected="@(g == ViewBag.CurrentGender ? "selected" : null)">@g</option>
+        }
+    </select>
+
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<!-- Phần danh sách sản phẩm -->
+<h2 class="text-center mb-4">Our Products</h2>
+<div class="row">
+    @foreach (var p in Model)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <img src="@p.ImageUrl" class="card-img-top" />
+                <div class="card-body">
+                    <h5>@p.Name</h5>
+                    <p class="text-muted">@p.Gender's Shoes</p>
+                    <p>@p.Price.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</p>
+
+                    <a asp-action="Details" asp-route-id="@p.GiayId" class="btn btn-outline-primary btn-sm ajax-link">View</a>
+                    <a asp-action="Edit" asp-route-id="@p.GiayId" class="btn btn-outline-primary btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@p.GiayId" class="btn btn-outline-primary btn-sm">Delete</a>
+
+                    @if (p.ProductGroup != null)
+                    {
+                        @await Html.PartialAsync("DisplayGroup", p.ProductGroup)
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+
+

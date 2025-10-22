@@ -1,0 +1,74 @@
+﻿@model IEnumerable<WebGiayOnline.Models.Discount>
+
+@{
+    ViewData["Title"] = "Danh sách giảm giá";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout1.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h3 class="text-primary fw-bold mb-4">
+                <i class="fas fa-tags me-2"></i> Danh sách chương trình giảm giá
+            </h3>
+
+            <p>
+                <a asp-action="Create" class="btn btn-success">
+                    <i class="fas fa-plus-circle me-1"></i> Tạo mới
+                </a>
+            </p>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle shadow-sm">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th>Tên chương trình</th>
+                            <th>Phần trăm (%)</th>
+                            <th>Thời gian áp dụng</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td class="text-center fw-semibold">@item.Percentage %</td>
+                                <td class="text-center">
+                                    @item.StartDate.ToString("dd/MM/yyyy") - @item.EndDate.ToString("dd/MM/yyyy")
+                                </td>
+                                <td class="text-center">
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i> Kích hoạt</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary"><i class="fas fa-times-circle me-1"></i> Không hoạt động</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a asp-action="Edit" asp-route-id="@item.DiscountId" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-edit me-1"></i> Sửa
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.DiscountId" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash-alt me-1"></i> Xóa
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">Không có chương trình giảm giá nào.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

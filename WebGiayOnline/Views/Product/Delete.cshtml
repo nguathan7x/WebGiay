@@ -1,0 +1,22 @@
+﻿@model WebGiayOnline.Models.Giay
+@{
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Are you sure you want to delete this product?</h2>
+<div>
+    <strong>Name:</strong> @Model.Name
+    <br />
+    <strong>Price:</strong> @Model.Price
+    <br />
+   @*  <strong>Size:</strong> @Model.Size *@
+    <br />
+    <strong>Color:</strong> @Model.Color
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="GiayId" />
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>
+

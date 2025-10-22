@@ -1,0 +1,36 @@
+﻿@model WebGiayOnline.Models.ProductGroup
+
+@{
+    ViewData["Title"] = "Xóa nhóm sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout1.cshtml"; // Điều chỉnh layout nếu cần
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h3 class="text-danger fw-bold mb-4">
+                <i class="fas fa-exclamation-triangle me-2"></i> Xác nhận xóa nhóm sản phẩm
+            </h3>
+
+            <div class="mb-3">
+                <p>Bạn có chắc chắn muốn xóa nhóm sản phẩm sau?</p>
+                <ul>
+                    <li><strong>Tên nhóm:</strong> @Model.GroupName</li>
+                </ul>
+            </div>
+
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="ProductGroupId" />
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt me-1"></i> Xóa
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Hủy
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

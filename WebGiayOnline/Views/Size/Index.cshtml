@@ -1,0 +1,28 @@
+﻿@model IEnumerable<WebGiayOnline.Models.Size>
+@{
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Size List</h2>
+<p><a class="btn btn-primary" asp-action="Create">Add New Size</a></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Label</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var size in Model)
+        {
+            <tr>
+                <td>@size.Label</td>
+                <td>
+                    <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@size.SizeId">Edit</a>
+                    <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@size.SizeId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,51 @@
+﻿@model WebGiayOnline.Models.Momo.MomoExecuteResponseModel
+
+<div class="container py-5">
+    @if (ViewBag.PaymentFailed != null && ViewBag.PaymentFailed == true)
+    {
+        <div class="alert alert-danger border border-danger shadow-sm rounded">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-x-circle-fill fs-3 me-2"></i>
+                <h4 class="mb-0">Giao dịch thất bại hoặc đã bị hủy</h4>
+            </div>
+            <hr />
+            <p class="mb-0">Vui lòng kiểm tra lại hoặc thử phương thức thanh toán khác.</p>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-success border border-success shadow-sm rounded">
+            <div class="d-flex align-items-center mb-2">
+                <i class="bi bi-check-circle-fill fs-3 me-2"></i>
+                <h4 class="mb-0">Thanh toán thành công!</h4>
+            </div>
+            <hr />
+            <ul class="list-unstyled fs-5 ps-3">
+                <li><strong>🆔 Mã đơn hàng:</strong> @Model.OrderId</li>
+                <li><strong>💵 Số tiền:</strong> @Convert.ToDecimal(Model.Amount).ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</li>
+                <li><strong>💬 Nội dung:</strong> @Model.OrderInfo</li>
+            </ul>
+        </div>
+    }
+</div>
+
+
+@* @using System.Globalization
+@model WebGiayOnline.Models.Momo.MomoExecuteResponseModel
+
+@{
+    ViewData["Title"] = "Kết quả thanh toán";
+}
+
+<div class="container mt-5">
+    <div class="alert alert-success text-center">
+        <h2 class="mb-3">🎉 Thanh toán thành công!</h2>
+        <p><strong>Mã giao dịch:</strong> @Model.OrderId</p>
+        <p><strong>Số tiền:</strong> @String.Format(new CultureInfo("vi-VN"), "{0:C0}", Convert.ToDecimal(Model.Amount))</p>
+        <p><strong>Thông tin đơn hàng:</strong> @Model.OrderInfo</p>
+        <p><strong>Trạng thái:</strong> Thành công</p>
+
+        <a href="/" class="btn btn-primary mt-4">Quay về trang chủ</a>
+    </div>
+</div>
+ *@

@@ -1,0 +1,14 @@
+﻿@model WebGiayOnline.Models.ProductGroup
+@{
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Xóa nhóm sản phẩm</h2>
+
+<h4>Bạn có chắc chắn muốn xóa nhóm: "@Model.GroupName" không?</h4>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="ProductGroupId" />
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>

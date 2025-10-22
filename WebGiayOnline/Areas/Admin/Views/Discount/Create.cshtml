@@ -1,0 +1,93 @@
+﻿@model DiscountCreateViewModel
+
+@{
+    ViewData["Title"] = "Tạo chương trình giảm giá";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout1.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h3 class="text-primary fw-bold mb-4">
+                <i class="fas fa-tags me-2"></i> Tạo chương trình giảm giá mới
+            </h3>
+
+            <form asp-action="Create" method="post">
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Tên chương trình</label>
+                    <input asp-for="Name" class="form-control" placeholder="Nhập tên chương trình giảm giá" required />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Percentage" class="form-label">Phần trăm giảm (%)</label>
+                    <input asp-for="Percentage" class="form-control" type="number" min="1" max="100" required />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="StartDate" class="form-label">Ngày bắt đầu</label>
+                        <input asp-for="StartDate" type="datetime-local" class="form-control" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="EndDate" class="form-label">Ngày kết thúc</label>
+                        <input asp-for="EndDate" type="datetime-local" class="form-control" required />
+                    </div>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input asp-for="IsActive" class="form-check-input" type="checkbox" id="IsActive" />
+                    <label class="form-check-label" for="IsActive">Kích hoạt chương trình</label>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Chọn sản phẩm áp dụng:</label>
+
+                    <!-- Form tìm kiếm -->
+                    <input type="text" id="productSearch" class="form-control mb-3" placeholder="Tìm theo tên sản phẩm..." />
+
+                    <!-- Danh sách sản phẩm -->
+                    <div class="border rounded p-3" style="max-height: 300px; overflow-y: auto;" id="productList">
+                        @foreach (var giay in Model.AllGiays)
+                        {
+                            <div class="form-check product-item">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="SelectedGiayIds"
+                                       value="@giay.GiayId"
+                                       id="giay_@giay.GiayId" />
+                                <label class="form-check-label" for="giay_@giay.GiayId">
+                                    @giay.Name
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-plus-circle me-1"></i> Tạo giảm giá
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        document.getElementById("productSearch").addEventListener("input", function () {
+            const keyword = this.value.toLowerCase();
+            const items = document.querySelectorAll(".product-item");
+
+            items.forEach(item => {
+                const label = item.querySelector("label").innerText.toLowerCase();
+                item.style.display = label.includes(keyword) ? "" : "none";
+            });
+        });
+    </script>
+}

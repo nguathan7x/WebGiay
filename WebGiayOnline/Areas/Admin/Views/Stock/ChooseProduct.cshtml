@@ -1,0 +1,53 @@
+﻿@model IEnumerable<WebGiayOnline.Models.Giay>
+
+@{
+    ViewData["Title"] = "Danh sách sản phẩm theo màu";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout1.cshtml";
+}
+
+<div class="container mt-4">
+    <h3 class="text-primary fw-bold mb-3">Danh sách sản phẩm</h3>
+
+    <!-- Ô tìm kiếm -->
+    <div class="mb-3">
+        <input type="text" id="searchBox" class="form-control" placeholder="Tìm sản phẩm theo tên..." />
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3" id="productContainer">
+        @foreach (var product in Model)
+        {
+            <div class="col product-item">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <a asp-action="EditBulk" asp-route-giayId="@product.GiayId" class="fw-semibold text-decoration-none">
+                                @product.Name
+                            </a>
+                        </div>
+
+                        <span class="badge rounded-pill"
+                              style="background-color:@(string.IsNullOrEmpty(product.Color) ? "gray" : product.Color); color: white; padding: 8px 12px;">
+                            @(string.IsNullOrEmpty(product.Color) ? "Không có màu" : product.Color)
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const searchInput = document.getElementById("searchBox");
+        const productItems = document.querySelectorAll(".product-item");
+
+        searchInput.addEventListener("input", function () {
+            const keyword = this.value.toLowerCase();
+
+            productItems.forEach(item => {
+                const name = item.querySelector("a").innerText.toLowerCase();
+                item.style.display = name.includes(keyword) ? "block" : "none";
+            });
+        });
+    </script>
+}

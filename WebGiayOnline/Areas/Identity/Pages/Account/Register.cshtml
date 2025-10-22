@@ -1,0 +1,142 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+    // Layout = "_Layout"; // Or set to null for a standalone page
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #fff;
+        color: #000;
+    }
+
+    .register-container {
+        max-width: 500px;
+        margin: 60px auto;
+        background: #f9f9f9;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    .form-floating {
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 14px;
+        font-size: 1rem;
+    }
+
+    select.form-control {
+        height: 58px;
+    }
+
+    .btn-black {
+        background-color: #000;
+        color: #fff;
+        padding: 12px;
+        width: 100%;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: background 0.3s ease;
+    }
+
+        .btn-black:hover {
+            background-color: #333;
+        }
+
+    .external-logins {
+        margin-top: 30px;
+    }
+
+        .external-logins button {
+            background-color: #000;
+            color: #fff;
+            margin: 6px 0;
+            border-radius: 8px;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            transition: background 0.3s ease;
+        }
+
+            .external-logins button:hover {
+                background-color: #333;
+            }
+
+    .text-danger {
+        color: #d8000c;
+    }
+</style>
+
+<div class="register-container">
+    <h1>@ViewData["Title"]</h1>
+
+    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+        <div class="form-floating">
+            <input asp-for="Input.FullName" class="form-control" placeholder="Full name" autocomplete="name" />
+            <label asp-for="Input.FullName">Full Name</label>
+            <span asp-validation-for="Input.FullName" class="text-danger"></span>
+        </div>
+
+        <div class="form-floating">
+            <input asp-for="Input.Email" class="form-control" placeholder="name@example.com" autocomplete="username" />
+            <label asp-for="Input.Email">Email</label>
+            <span asp-validation-for="Input.Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-floating">
+            <input asp-for="Input.Password" class="form-control" placeholder="Password" autocomplete="new-password" />
+            <label asp-for="Input.Password">Password</label>
+            <span asp-validation-for="Input.Password" class="text-danger"></span>
+        </div>
+
+        <div class="form-floating">
+            <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="Confirm password" autocomplete="new-password" />
+            <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+        </div>
+
+   @*      <div class="form-floating">
+            <select asp-for="Input.Role" asp-items="@Model.Input.RoleList" class="form-control">
+                <option disabled selected>Select a role</option>
+            </select>
+            <label asp-for="Input.Role">Role</label>
+        </div>
+ *@
+        <button id="registerSubmit" type="submit" class="btn-black">Create Account</button>
+    </form>
+
+    @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+    {
+        <div class="external-logins">
+            <hr />
+            <p style="text-align:center; font-weight: 600;">Or register with another account</p>
+            <form asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                @foreach (var provider in Model.ExternalLogins!)
+                {
+                    <button type="submit" name="provider" value="@provider.Name" title="Register with @provider.DisplayName">
+                        @provider.DisplayName
+                    </button>
+                }
+            </form>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

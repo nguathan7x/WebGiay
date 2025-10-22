@@ -1,0 +1,754 @@
+﻿@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHttpContextAccessor HttpContextAccessor
+
+@* @using Microsoft.Extensions.Localization
+@using WebGiayOnline.Resources
+@inject IStringLocalizer<SharedResources> Localizer
+ *@
+
+@using System.Globalization;
+@using Microsoft.EntityFrameworkCore
+@using WebGiayOnline.Models.Orders
+@inject WebGiayOnline.Data.ApplicationDbContext _context
+@{
+    var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var cartCount = 0;
+
+    if (!string.IsNullOrEmpty(userId))
+    {
+        var cart = _context.ShoppingCarts
+            .Include(c => c.Items)
+            .FirstOrDefault(c => c.UserId == userId);
+        if (cart != null)
+        {
+            cartCount = cart.Items.Sum(i => i.Quantity);
+        }
+    }
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebGiayOnline</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"
+          rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Thêm vào _Layout.cshtml phần <head> -->
+    @* <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter&display=swap" rel="stylesheet"> *@
+
+   @*  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> *@
+</head>
+<body>
+    <header>
+        <!-- Hero Carousel -->
+        <section class="hero-section">
+            <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="carousel-image-overlay">
+                            <img src="/images/banner1.jpg" class="d-block w-100" alt="Giày Mới">
+                        </div>
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>Bộ Sưu Tập Mới</h5>
+                            <p>Khám phá những mẫu giày mới nhất của chúng tôi.</p>
+                            <a href="/Products/NewArrivals" class="btn btn-primary">Xem Ngay</a>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="carousel-image-overlay">
+                            <img src="/images/banner2.jpg" class="d-block w-100" alt="Giảm Giá">
+                        </div>
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>Giảm Giá Đặc Biệt</h5>
+                            <p>Nhận ưu đãi lên đến 50% cho các mẫu giày hot.</p>
+                            <a href="/Products/Sale" class="btn btn-danger">Mua Ngay</a>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="carousel-image-overlay">
+                            <img src="/images/banner3.png" class="d-block w-100" alt="Giày Thể Thao">
+                        </div>
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>Giày Thể Thao</h5>
+                            <p>Thoải mái và phong cách cho mọi hoạt động.</p>
+                            <a href="/Products/Sports" class="btn btn-success">Khám Phá</a>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Trước</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Tiếp</span>
+                </button>
+            </div>
+        </section>
+
+     @*    <div id="bannerCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="~/images/banner1.jpg" class="d-block w-100" alt="Banner 1">
+                </div>
+                <div class="carousel-item">
+                    <img src="~/images/banner2.jpg" class="d-block w-100" alt="Banner 2">
+                </div>
+            </div>
+        </div> *@
+        
+        @if (User.IsInRole(SD.Role_Admin))
+{
+            <a href="/Admin/DashBoard/Index" class="btn btn-outline-dark d-inline-flex align-items-center rounded-pill px-3 py-1 shadow-sm">
+                <i class="bi bi-speedometer2 me-2"></i> Trang quản trị
+            </a>
+
+}
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm sticky-top">
+            <div class="container-fluid px-4">
+                <!-- Logo -->
+                <a class="navbar-brand fw-bold d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="https://logos-world.net/wp-content/uploads/2020/04/Air-Jordan-Logo.png" height="36" class="me-2" alt="Jordan Logo">
+                    WebGiayOnline
+                </a>
+
+                <!-- Toggle for mobile -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Navbar content -->
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <!-- Left menu -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark d-flex align-items-center ajax-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door-fill me-2"></i> Home
+                            </a>
+
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark d-flex align-items-center " asp-area="" asp-controller="Home" asp-action="About">
+                                <i class="bi bi-info-circle-fill me-2"></i> About
+                            </a>
+
+                        </li>
+                        @if (User.IsInRole(SD.Role_Customer))
+                        {
+                           @*  <li class="nav-item"><a class="nav-link text-dark ajax-link" asp-controller="Order" asp-action="MyOrders">Lịch sử đơn hàng</a></li> *@
+                             <li class="nav-item">
+                                <a class="nav-link text-dark ajax-link d-flex align-items-center" asp-controller="Order" asp-action="MyOrders">
+                                    <i class="bi bi-receipt-cutoff me-2"></i> My Orders
+                                </a>
+
+                            </li> 
+                        }
+                        <!-- Language Selector -->
+                   
+                        @{
+                            var cultureFeature = HttpContextAccessor.HttpContext?.Features.Get<IRequestCultureFeature>();
+                            var currentCulture = cultureFeature?.RequestCulture.Culture.Name ?? "vi-VN";
+                            var returnUrl = Context.Request.Path + Context.Request.QueryString;
+                        }
+
+                        <li class="nav-item ms-2">
+                          
+
+                            <form asp-controller="Language" asp-action="SetLanguage" method="post" class="d-flex align-items-center ajax-form">
+                                <select name="culture" class="form-select form-select-sm" onchange="this.form.submit();">
+                                    <option value="vi-VN" selected="@(currentCulture == "vi-VN" ? "selected" : null)">🇻🇳 Tiếng Việt</option>
+                                    <option value="en-US" selected="@(currentCulture == "en-US" ? "selected" : null)">🇺🇸 English</option>
+                                </select>
+                                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                            </form>
+                        </li>
+
+                    </ul>
+
+                    <!-- Right menu -->
+                    <ul class="navbar-nav align-items-center">
+                        <!-- Login/Logout or Username -->
+                        <li class="nav-item me-3">
+                            <partial name="_LoginPartial" />
+                        </li>
+
+                        <!-- Favorites -->
+                        <li class="nav-item me-2">
+                            <a class="nav-link text-danger fw-bold d-flex align-items-center" asp-controller="Favorite" asp-action="Index">
+                                <i class="fa fa-heart me-1"></i> Favorites
+                            </a>
+                        </li>
+
+                        <!-- Cart -->
+                        <li class="nav-item me-3">
+                            <a asp-controller="ShoppingCart" asp-action="Index" class="btn btn-outline-dark position-relative d-flex align-items-center">
+                                <i class="bi bi-cart-fill me-2"></i> Cart
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    @cartCount
+                                </span>
+                            </a>
+                        </li>
+
+                        <!-- Dark Mode -->
+                        <li class="nav-item">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="darkModeToggle">
+                                <label class="form-check-label small" for="darkModeToggle">Dark Mode</label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+    </header>
+    <div id="main-content">
+   @*  <div class="container"> *@
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+ @*    </div> *@
+    </div>
+
+    <!-- PHẦN FOOTER ĐƯỢC NÂNG CẤP -->
+
+    <footer class="border-top bg-light text-muted mt-4">
+        <div class="container py-4">
+            <div class="row">
+                <!-- Cột 1: Giới thiệu -->
+                <div class="col-md-4 mb-3">
+                    <h5 class="text-dark mb-3">WebGiayOnline</h5>
+                    <p class="text-secondary">@Localizer["We specialize in providing authentic shoes from world-renowned brands. Committed to quality, reliability, and dedicated service."]</p>
+                </div>
+
+                <!-- Cột 2: Thương hiệu -->
+                <div class="col-md-4 mb-3">
+                    <h5 class="text-dark mb-3">@Localizer["Featured Brands"]</h5>
+                    <div class="d-flex flex-wrap gap-3">
+                        <img src="https://1000logos.net/wp-content/uploads/2017/03/Nike-Logo.png" alt="Nike" height="40">
+                   @*      <img src="https://1000logos.net/wp-content/uploads/2017/03/Adidas-Logo.png" alt="Adidas" height="40">
+                        <img src="https://1000logos.net/wp-content/uploads/2021/05/Puma-logo.png" alt="Puma" height="40">
+                        <img src="https://1000logos.net/wp-content/uploads/2017/03/Converse-logo.png" alt="Converse" height="40">
+                        <img src="https://1000logos.net/wp-content/uploads/2020/09/Vans-logo.png" alt="Vans" height="40"> *@
+                    </div>
+                </div>
+
+                <!-- Cột 3: Mạng xã hội -->
+                <div class="col-md-4 mb-3">
+                    <h5 class="text-dark mb-3">@Localizer["Connect with Us"]</h5>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-dark fs-4"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-dark fs-4"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-dark fs-4"><i class="bi bi-youtube"></i></a>
+                        <a href="#" class="text-dark fs-4"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-dark fs-4"><i class="bi bi-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="text-center text-secondary">
+                &copy; 2025 - WebGiayOnline | All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        const toggle = document.getElementById('darkModeToggle');
+
+        toggle.addEventListener('change', function() {
+            document.body.classList.toggle('dark-mode', this.checked);
+            localStorage.setItem('darkMode', this.checked);
+        });
+
+        // Load trạng thái dark mode từ localStorage
+        window.addEventListener('DOMContentLoaded', () => {
+            const isDark = localStorage.getItem('darkMode') === 'true';
+            toggle.checked = isDark;
+            document.body.classList.toggle('dark-mode', isDark);
+        });
+    </script>
+@*     <script>
+        const toggle = document.getElementById('darkModeToggle');
+
+        toggle.addEventListener('change', function() {
+            document.body.classList.toggle('dark-mode', this.checked);
+            localStorage.setItem('darkMode', this.checked);
+        });
+
+        // Load trạng thái dark mode từ localStorage
+        window.addEventListener('DOMContentLoaded', () => {
+            const isDark = localStorage.getItem('darkMode') === 'true';
+            toggle.checked = isDark;
+            document.body.classList.toggle('dark-mode', isDark);
+        });
+    </script> *@
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+<style>
+    .dark-mode {
+        background-color: #121212 !important;
+        color: #e0e0e0 !important;
+    }
+
+        /* --- Liên kết --- */
+        .dark-mode a {
+            color: #90caf9 !important;
+        }
+
+            .dark-mode a:hover {
+                color: #ffffff !important;
+            }
+
+        /* --- Navbar & Header --- */
+        .dark-mode .navbar,
+        .dark-mode .navbar-light,
+        .dark-mode .navbar-expand-lg,
+        .dark-mode header {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+            border-color: #333 !important;
+        }
+
+        /* --- Main content & container --- */
+        .dark-mode #main-content,
+        .dark-mode main,
+        .dark-mode .container,
+        .dark-mode .row {
+            background-color: #121212 !important;
+            color: #e0e0e0 !important;
+        }
+
+        /* --- Card sản phẩm --- */
+        .dark-mode .card,
+        .dark-mode .product-card {
+            background-color: #1e1e1e !important;
+            color: #fff !important;
+            border: 1px solid #333 !important;
+        }
+
+        .dark-mode .card-title,
+        .dark-mode .card-text {
+            color: #ddd !important;
+        }
+
+        /* --- Sidebar Filter (accordion hoặc card) --- */
+        .dark-mode .accordion,
+        .dark-mode .accordion-item,
+        .dark-mode .accordion-header,
+        .dark-mode .accordion-button,
+        .dark-mode .filter-sidebar,
+        .dark-mode .filter-panel,
+        .dark-mode .filter-section {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+            border-color: #444 !important;
+        }
+
+            .dark-mode .accordion-button::after {
+                filter: invert(1);
+            }
+
+            .dark-mode .accordion-button:not(.collapsed) {
+                background-color: #2a2a2a !important;
+            }
+
+        /* --- Form controls --- */
+        .dark-mode .form-control,
+        .dark-mode .form-select,
+        .dark-mode input,
+        .dark-mode textarea,
+        .dark-mode select {
+            background-color: #2a2a2a !important;
+            color: #fff !important;
+            border-color: #555 !important;
+        }
+
+            .dark-mode input::placeholder {
+                color: #bbb !important;
+            }
+        /* --- Table giỏ hàng --- */
+        .dark-mode .cart-table,
+        .dark-mode .cart-table th,
+        .dark-mode .cart-table td {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+            border-color: #333 !important;
+        }
+
+            .dark-mode .cart-table tbody tr:hover {
+                background-color: #2a2a2a !important;
+            }
+
+        /* --- Các nút trong cart --- */
+        .dark-mode .btn-update,
+        .dark-mode .btn-remove,
+        .dark-mode .btn-clear,
+        .dark-mode .btn-checkout {
+            background-color: #333 !important;
+color: #fff !important;
+            border: 1px solid #555 !important;
+        }
+
+        .dark-mode .btn-checkout {
+            background-color: #2e7d32 !important; /* xanh lá đậm */
+        }
+
+            .dark-mode .btn-checkout:hover {
+                background-color: #388e3c !important;
+            }
+
+        .dark-mode .btn-update:hover,
+        .dark-mode .btn-remove:hover,
+        .dark-mode .btn-clear:hover {
+            background-color: #444 !important;
+        }
+
+        /* --- Tổng tiền --- */
+        .dark-mode .cart-summary {
+            color: #ccc !important;
+        }
+        /* --- Modal (Product Detail) --- */
+        .dark-mode .modal-content {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+        }
+
+        .dark-mode .modal-header,
+        .dark-mode .modal-body,
+        .dark-mode .modal-footer {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+            border-color: #333 !important;
+        }
+
+        .dark-mode .modal-title {
+            color: #ffffff !important;
+        }
+
+        .dark-mode .btn-close {
+            filter: invert(1);
+        }
+
+        .dark-mode .modal-body p,
+        .dark-mode .modal-body strong {
+            color: #ccc !important;
+        }
+
+        /* --- Nút bấm --- */
+        .dark-mode .btn {
+            border-color: #555 !important;
+            background-color: #333 !important;
+            color: #fff !important;
+        }
+
+        .dark-mode .btn-primary {
+            background-color: #1976d2 !important;
+        }
+
+        .dark-mode .btn-danger {
+            background-color: #d32f2f !important;
+        }
+
+        .dark-mode .btn-success {
+            background-color: #388e3c !important;
+        }
+
+        .dark-mode .btn-outline-primary {
+            border-color: #64b5f6 !important;
+            color: #64b5f6 !important;
+        }
+
+            .dark-mode .btn-outline-primary:hover {
+                background-color: #64b5f6 !important;
+                color: #fff !important;
+            }
+
+        /* --- Dropdown, badge --- */
+        .dark-mode .dropdown-menu {
+            background-color: #2a2a2a !important;
+            color: #fff !important;
+        }
+
+        .dark-mode .dropdown-item {
+            color: #ccc !important;
+        }
+
+            .dark-mode .dropdown-item:hover {
+                background-color: #444 !important;
+                color: white !important;
+            }
+
+        .dark-mode .badge.bg-danger {
+            background-color: #e53935 !important;
+        }
+
+        .dark-mode .badge.bg-warning {
+            background-color: #ffb74d !important;
+            color: #212121 !important;
+        }
+
+        .dark-mode .badge.bg-info {
+            background-color: #4fc3f7 !important;
+            color: #212121 !important;
+        }
+
+        .dark-mode .badge.bg-success {
+            background-color: #66bb6a !important;
+}
+
+        .dark-mode .badge.bg-secondary {
+            background-color: #757575 !important;
+        }
+
+        /* --- Footer --- */
+        .dark-mode footer {
+            background-color: #1a1a1a !important;
+            color: #aaa !important;
+        }
+
+            .dark-mode footer h5,
+            .dark-mode footer a {
+                color: #fff !important;
+            }
+        /* --- Đánh giá sao tổng hợp --- */
+        .dark-mode .rating-summary,
+        .dark-mode .rating-breakdown,
+        .dark-mode .rating-average,
+        .dark-mode .rating-count {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+            border-color: #333 !important;
+        }
+
+        /* --- Các thanh tiến trình đánh giá sao --- */
+        .dark-mode .progress,
+        .dark-mode .progress-bar {
+            background-color: #333 !important;
+        }
+
+        .dark-mode .progress-bar {
+            background-color: #fbc02d !important; /* màu vàng cho sao */
+        }
+
+        /* --- Hộp bình luận người dùng --- */
+        .dark-mode .review-box,
+        .dark-mode .review-item,
+        .dark-mode .review-content {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+            border: 1px solid #444 !important;
+        }
+
+        /* --- Tên người đánh giá, ngày đánh giá --- */
+        .dark-mode .review-author,
+        .dark-mode .review-date {
+            color: #ccc !important;
+        }
+
+        /* --- Avatar người dùng --- */
+        .dark-mode .review-avatar img {
+            border: 1px solid #666 !important;
+        }
+
+        /* --- Sao đánh giá cá nhân --- */
+        .dark-mode .user-rating .fa-star {
+            color: #fbc02d !important;
+        }
+
+        /* --- Bảng đơn hàng --- */
+        .dark-mode table {
+            color: #e0e0e0 !important;
+        }
+
+        .dark-mode thead,
+        .dark-mode .table thead,
+        .dark-mode .table-light,
+        .dark-mode thead th {
+            background-color: #2a2a2a !important;
+            color: #ffffff !important;
+            border-color: #444 !important;
+        }
+
+        .dark-mode .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #1f1f1f !important;
+        }
+
+        .dark-mode .table-striped tbody tr:nth-of-type(even) {
+            background-color: #2a2a2a !important;
+        }
+
+        .dark-mode .table-bordered th,
+        .dark-mode .table-bordered td,
+        .dark-mode td,
+        .dark-mode th {
+            border-color: #444 !important;
+            color: #e0e0e0 !important;
+        }
+
+        /* --- List-group chi tiết đơn hàng --- */
+        .dark-mode .list-group-item {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+            border-color: #333 !important;
+        }
+        /* --- Khung đánh giá tổng & bình luận --- */
+        .dark-mode .bg-light,
+.dark-mode .card,
+        .dark-mode .card-body,
+        .dark-mode .border,
+        .dark-mode .review-container,
+        .dark-mode .rating-summary,
+        .dark-mode .rating-breakdown {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+            border-color: #444 !important;
+        }
+
+        /* --- Viền progress --- */
+        .dark-mode .progress {
+            background-color: #333 !important;
+        }
+
+        /* --- Sao màu vàng trong đánh giá --- */
+        .dark-mode .text-warning {
+            color: #fbc02d !important;
+        }
+
+        /* --- Văn bản mờ --- */
+        .dark-mode .text-muted {
+            color: #aaa !important;
+        }
+
+        /* --- Phần đánh giá sao từng người dùng --- */
+        .dark-mode .user-review,
+        .dark-mode .user-comment,
+        .dark-mode .user-rating {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+            border-color: #444 !important;
+        }
+
+        /* --- Ảnh người dùng --- */
+        .dark-mode .avatar img {
+            border: 1px solid #666 !important;
+        }
+
+        /* --- Các đoạn sao chưa active (màu xám) --- */
+        .dark-mode .fa-star,
+        .dark-mode .fa-star-half-alt {
+            color: #fbc02d !important;
+        }
+
+            /* --- Nếu có icon ngôi sao màu xám, cần style riêng --- */
+            .dark-mode .fa-star.text-secondary {
+                color: #555 !important;
+            }
+
+    /* --- Hiệu ứng chuyển mượt mà --- */
+    body,
+    .navbar,
+    footer,
+    .card,
+    .form-control,
+    .btn,
+    .carousel-caption,
+    .container,
+    .accordion,
+    .accordion-button {
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function bindAjaxHandlers(containerSelector = 'body') {
+        // Bắt sự kiện click cho các link có class 'ajax-link'
+        $(containerSelector).on('click', '.ajax-link', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+
+            $.get(url)
+                .done(function(data) {
+                    $('#main-content').html(data);
+                    history.pushState(null, '', url);
+                });
+        });
+
+        // Bắt sự kiện submit cho các form có class 'ajax-form'
+        $(containerSelector).on('submit', '.ajax-form', function(e) {
+            e.preventDefault();
+            const $form = $(this);
+            const url = $form.attr('action') || window.location.pathname;
+            const method = $form.attr('method') || 'get';
+            const data = $form.serialize();
+
+            if (method.toLowerCase() === 'get') {
+                $.get(url, data)
+                    .done(function(response) {
+                        $('#main-content').html(response);
+                        history.pushState(null, '', url + '?' + data);
+                    });
+            } else {
+                $.post(url, data)
+                    .done(function(response) {
+                        $('#main-content').html(response);
+                        history.pushState(null, '', url);
+                    });
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        bindAjaxHandlers();
+
+        // Bắt sự kiện back/forward trình duyệt
+        window.onpopstate = function() {
+            $.get(location.href).done(function(data) {
+                $('#main-content').html(data);
+            });
+        };
+    });
+    <script>
+        function changeMainImage(el) {
+            var newSrc = el.getAttribute('src');
+        if (newSrc) {
+            document.getElementById('mainImage').src = newSrc;
+            }
+        }
+</script>
+<script>
+if (url.includes('/Language/SetLanguage')) {
+    $.post(url, data).done(function () {
+        $.get(location.href).done(function (html) {
+            $('#main-content').html($(html).find('#main-content').html());
+        });
+    });
+}
+</script>
+
+
+
+

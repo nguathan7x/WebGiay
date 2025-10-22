@@ -1,0 +1,84 @@
+﻿@model List<WebGiayOnline.Models.Order>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout1.cshtml"; // hoặc _Layout2.cshtml nếu bạn đang dùng layout khác
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h3 class="mb-4 text-primary fw-bold">
+                <i class="fas fa-clipboard-list me-2"></i> Quản lý đơn hàng
+            </h3>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th>Mã</th>
+                            <th>Khách hàng</th>
+                            <th>Ngày đặt</th>
+                            <th>Trạng thái</th>
+                            <th>Tổng tiền</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold text-center">#@order.OrderId</td>
+                                <td>@order.User?.UserName</td>
+                                <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td class="text-center">
+                                    @if (order.Status == "Chờ xác nhận")
+                                    {
+                                        <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                    }
+                                    else if (order.Status == "Đã xác nhận")
+                                    {
+                                        <span class="badge bg-info text-dark">Đã xác nhận</span>
+                                    }
+                                    else if (order.Status == "Hoàn thành")
+                                    {
+                                        <span class="badge bg-success">Hoàn thành</span>
+                                    }
+                                    else if (order.Status == "Đã Hủy")
+                                    {
+                                        <span class="badge bg-danger">Đã hủy</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@order.Status</span>
+                                    }
+                                </td>
+                                <td class="text-end">@order.Total.ToString("N0") đ</td>
+                                <td>
+                                    <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
+                                        <form asp-action="UpdateStatus" asp-controller="Admin" method="post" class="d-flex">
+                                            <input type="hidden" name="orderId" value="@order.OrderId" />
+                                            <select name="newStatus" class="form-select form-select-sm me-2">
+                                                <option value="Chờ xác nhận" selected="@(order.Status == "Chờ xác nhận")">Chờ xác nhận</option>
+                                                <option value="Đã xác nhận" selected="@(order.Status == "Đã xác nhận")">Đã xác nhận</option>
+                                                <option value="Hoàn thành" selected="@(order.Status == "Hoàn thành")">Hoàn thành</option>
+                                                @* <option value="Đã Hủy" selected="@(order.Status == "Đã Hủy")">Đã hủy</option> *@
+                                            </select>
+                                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-check"></i> Lưu
+                                            </button>
+                                        </form>
+                                        <a asp-area="Admin" asp-controller="Admin" asp-action="AdminOrderDetails" asp-route-orderId="@order.OrderId"
+                                           class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-eye"></i> Chi tiết
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
